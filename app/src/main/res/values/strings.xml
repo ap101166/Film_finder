@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Film finder</string>
+    <string name="film_desript_1">Экранизации комиксов Боба Кейна о Бэтмене появились ещё в 40-х годах, это телесериалы и кинофильмы Британии и Америки, которые остаются популярными и по сей день. </string>
+    <string name="film_desript_2">Серия приключенческих фильмов о пиратах в Карибском море, режиссёрами которых выступили Гор Вербински (1—3 части), Роб Маршалл (4-я часть), Эспен Сандберг и Юаким Рённинг</string>
+    <string name="film_desript_3">Художественный фильм режиссёра Кеннета Брана, основанный на одноимённых комиксах издательства Marvel Comics</string>
+    <string name="film_desript_4">Серия фильмов о супергерое комиксов компании Marvel Comics Человек-пауке. Первые фильмы про человека паука были сняты в 1970-х годах.</string>
+    <string name="film_caption_1">Бэтмен</string>
+    <string name="film_caption_2">Пираты карибского моря</string>
+    <string name="film_caption_3">Тор</string>
+    <string name="film_caption_4">Человек-паук</string>
+    <string name="str_details">Детали</string>
+    <string name="strInviteFriend">Пригласить друга</string>
+    <string name="strLike">Нравится</string>
+    <string name="yourReply">Ваш отзыв о фильме</string>
+    <string name="sendReply">Послать отзыв</string>
+</resources>
