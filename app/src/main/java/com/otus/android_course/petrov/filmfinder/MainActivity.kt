@@ -9,7 +9,21 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
+data class FilmAttr(
+    val caption: Int,
+    val captionView: Int,
+    val description: Int,
+    val picture: Int
+) {}
+
 class MainActivity : AppCompatActivity() {
+
+    private val filmsList: List<FilmAttr> = listOf(
+        FilmAttr(R.string.film_caption_1, R.id.TextView1, R.string.film_desript_1, R.drawable.film_batman),
+        FilmAttr(R.string.film_caption_2, R.id.TextView2, R.string.film_desript_2, R.drawable.film_pirat),
+        FilmAttr(R.string.film_caption_3, R.id.TextView3, R.string.film_desript_3, R.drawable.film_plasch_thor),
+        FilmAttr(R.string.film_caption_4, R.id.TextView4, R.string.film_desript_4, R.drawable.spider_man)
+    )
 
     companion object {
         const val CAPTION = "caption"
@@ -18,35 +32,6 @@ class MainActivity : AppCompatActivity() {
         const val RET_CHECK_BOX_STATE = "ch_box_state"
         const val RET_TEXT = "ret_text"
     }
-
-    private val arrCaptions =
-        arrayOf(
-            R.id.TextView1,
-            R.id.TextView2,
-            R.id.TextView3,
-            R.id.TextView4
-        )
-    private val arrStrCaptions =
-        arrayOf(
-            R.string.film_caption_1,
-            R.string.film_caption_2,
-            R.string.film_caption_3,
-            R.string.film_caption_4
-        )
-    private val arrStrDescriptions =
-        arrayOf(
-            R.string.film_desript_1,
-            R.string.film_desript_2,
-            R.string.film_desript_3,
-            R.string.film_desript_4
-        )
-    private val arrImages =
-        arrayOf(
-            R.drawable.film_batman,
-            R.drawable.film_pirat,
-            R.drawable.film_plasch_thor,
-            R.drawable.spider_man
-        )
 
     private var filmIndex = 0
     private val FILM_INDEX_KEY = "FILM_INDEX"
@@ -81,22 +66,23 @@ class MainActivity : AppCompatActivity() {
         setFilmIndex(savedInstanceState.getInt(FILM_INDEX_KEY))
     }
 
-    fun setFilmIndex(idx: Int) {
+    private fun setFilmIndex(idx: Int) {
         //
         filmIndex = idx
-        for (views in arrCaptions) {
-            findViewById<TextView>(views).setTextColor(Color.BLACK)
+        for (film in filmsList) {
+            findViewById<TextView>(film.captionView).setTextColor(Color.BLACK)
         }
-        findViewById<TextView>(arrCaptions[idx]).setTextColor(Color.GREEN)
+        findViewById<TextView>(filmsList[idx].captionView).setTextColor(Color.GREEN)
     }
 
     fun onShowDetail(view: View) {
         setFilmIndex(view.tag.toString().toInt())
+        val curFilm = filmsList[filmIndex]
         //
         startActivityForResult(Intent(this, SecondActivity::class.java).apply {
-            putExtra(CAPTION, arrStrCaptions[filmIndex])
-            putExtra(DESCRIPT, arrStrDescriptions[filmIndex])
-            putExtra(PICTURE, arrImages[filmIndex])
+            putExtra(CAPTION, curFilm.caption)
+            putExtra(DESCRIPT, curFilm.description)
+            putExtra(PICTURE, curFilm.picture)
         }, REQ_CODE)
     }
 }

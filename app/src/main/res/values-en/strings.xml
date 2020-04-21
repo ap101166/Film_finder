@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="str_details">Details</string>
     <string name="strInviteFriend">Invite friend</string>
-
+    <string name="film_caption_1">Batman</string>
+    <string name="film_caption_2">Пираты карибского моря</string>
+    <string name="film_caption_3">Thor</string>
+    <string name="film_caption_4">Spiderman</string>
+    <string name="strLike">Like</string>
+    <string name="yourReply">Your reply</string>
+    <string name="sendReply">Send reply</string>
 </resources>
