@@ -22,7 +22,9 @@ class MainActivity : AppCompatActivity() {
         FilmAttr(R.string.film_caption_1, R.id.TextView1, R.string.film_desript_1, R.drawable.film_batman),
         FilmAttr(R.string.film_caption_2, R.id.TextView2, R.string.film_desript_2, R.drawable.film_pirat),
         FilmAttr(R.string.film_caption_3, R.id.TextView3, R.string.film_desript_3, R.drawable.film_plasch_thor),
-        FilmAttr(R.string.film_caption_4, R.id.TextView4, R.string.film_desript_4, R.drawable.spider_man)
+        FilmAttr(R.string.film_caption_4, R.id.TextView4, R.string.film_desript_4, R.drawable.spider_man),
+        FilmAttr(R.string.film_caption_5, R.id.TextView5, R.string.film_desript_5, R.drawable.film_avatar),
+        FilmAttr(R.string.film_caption_6, R.id.TextView6, R.string.film_desript_6, R.drawable.film_x_men_wolverine)
     )
 
     companion object {
@@ -70,9 +72,9 @@ class MainActivity : AppCompatActivity() {
         //
         filmIndex = idx
         for (film in filmsList) {
-            findViewById<TextView>(film.captionView).setTextColor(Color.BLACK)
+            findViewById<TextView>(film.captionView).setTextColor(resources.getColor(R.color.colorCaption))
         }
-        findViewById<TextView>(filmsList[idx].captionView).setTextColor(Color.GREEN)
+        findViewById<TextView>(filmsList[idx].captionView).setTextColor(Color.RED)
     }
 
     fun onShowDetail(view: View) {
