@@ -8,6 +8,9 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
+import java.lang.System.exit
+import kotlin.system.exitProcess
 
 data class FilmAttr(
     val caption: Int,
@@ -16,7 +19,7 @@ data class FilmAttr(
     val picture: Int
 ) {}
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), CustomDialog.NoticeDialogListener {
 
     private val filmsList: List<FilmAttr> = listOf(
         FilmAttr(R.string.film_caption_1, R.id.TextView1, R.string.film_desript_1, R.drawable.film_batman),
@@ -68,6 +71,10 @@ class MainActivity : AppCompatActivity() {
         setFilmIndex(savedInstanceState.getInt(FILM_INDEX_KEY))
     }
 
+    override fun onBackPressed() {
+        CustomDialog().show(supportFragmentManager, "custom")
+    }
+
     private fun setFilmIndex(idx: Int) {
         //
         filmIndex = idx
@@ -86,5 +93,9 @@ class MainActivity : AppCompatActivity() {
             putExtra(DESCRIPT, curFilm.description)
             putExtra(PICTURE, curFilm.picture)
         }, REQ_CODE)
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment) {
+        finish()
     }
 }

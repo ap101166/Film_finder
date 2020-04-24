@@ -33,6 +33,7 @@
         android:layout_marginStart="68dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
+        android:drawableEnd="@drawable/ic_sentiment_satisfied_black_24dp"
         android:onClick="onInviteFriend"
         android:text="@string/strInviteFriend"
         app:layout_constraintEnd_toEndOf="parent"
