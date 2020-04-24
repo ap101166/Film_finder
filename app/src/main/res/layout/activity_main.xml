@@ -7,7 +7,7 @@
 
     <GridLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:columnCount="2"
         android:rowCount="4">
 
@@ -190,7 +190,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/TextView5"
-                app:srcCompat="@drawable/film_Avatar" />
+                app:srcCompat="@drawable/film_avatar" />
 
             <Button
                 android:id="@+id/button5"
