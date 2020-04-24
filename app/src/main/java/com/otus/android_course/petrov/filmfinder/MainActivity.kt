@@ -64,18 +64,18 @@ class MainActivity : AppCompatActivity(), CustomDialog.NoticeDialogListener {
         const val PICTURE = "picture"
         const val RET_CHECK_BOX_STATE = "ch_box_state"
         const val RET_TEXT = "ret_text"
+        const val FILM_INDEX_KEY = "FILM_INDEX"
+        const val THEME_KEY = "THEME"
+        const val REQ_CODE = 333
     }
 
     private var filmIndex = 0
     private var themeId = 0
-    private val FILM_INDEX_KEY = "FILM_INDEX"
-    private val THEME_KEY = "THEME"
-    private val REQ_CODE = 333
 
     override fun onCreate(savedInstanceState: Bundle?) {
         savedInstanceState?.apply {
             themeId = getInt(THEME_KEY)
-            if (themeId != R.style.AppTheme && themeId != R.style.NoActionBarTheme) {
+            if (themeId != R.style.AppTheme && themeId != R.style.DarkTheme) {
                 themeId = R.style.AppTheme
             }
             setTheme(themeId)
@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity(), CustomDialog.NoticeDialogListener {
 
     fun onChangeTheme(view: View) {
         themeId = when (themeId) {
-            R.style.AppTheme -> R.style.NoActionBarTheme
+            R.style.AppTheme -> R.style.DarkTheme
             else -> R.style.AppTheme
         }
         recreate()
