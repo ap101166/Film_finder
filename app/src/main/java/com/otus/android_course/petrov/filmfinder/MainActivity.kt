@@ -9,8 +9,6 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
-import java.lang.System.exit
-import kotlin.system.exitProcess
 
 data class FilmAttr(
     val caption: Int,
@@ -22,12 +20,42 @@ data class FilmAttr(
 class MainActivity : AppCompatActivity(), CustomDialog.NoticeDialogListener {
 
     private val filmsList: List<FilmAttr> = listOf(
-        FilmAttr(R.string.film_caption_1, R.id.TextView1, R.string.film_desript_1, R.drawable.film_batman),
-        FilmAttr(R.string.film_caption_2, R.id.TextView2, R.string.film_desript_2, R.drawable.film_pirat),
-        FilmAttr(R.string.film_caption_3, R.id.TextView3, R.string.film_desript_3, R.drawable.film_plasch_thor),
-        FilmAttr(R.string.film_caption_4, R.id.TextView4, R.string.film_desript_4, R.drawable.spider_man),
-        FilmAttr(R.string.film_caption_5, R.id.TextView5, R.string.film_desript_5, R.drawable.film_avatar),
-        FilmAttr(R.string.film_caption_6, R.id.TextView6, R.string.film_desript_6, R.drawable.film_x_men_wolverine)
+        FilmAttr(
+            R.string.film_caption_1,
+            R.id.TextView1,
+            R.string.film_desript_1,
+            R.drawable.film_batman
+        ),
+        FilmAttr(
+            R.string.film_caption_2,
+            R.id.TextView2,
+            R.string.film_desript_2,
+            R.drawable.film_pirat
+        ),
+        FilmAttr(
+            R.string.film_caption_3,
+            R.id.TextView3,
+            R.string.film_desript_3,
+            R.drawable.film_plasch_thor
+        ),
+        FilmAttr(
+            R.string.film_caption_4,
+            R.id.TextView4,
+            R.string.film_desript_4,
+            R.drawable.spider_man
+        ),
+        FilmAttr(
+            R.string.film_caption_5,
+            R.id.TextView5,
+            R.string.film_desript_5,
+            R.drawable.film_avatar
+        ),
+        FilmAttr(
+            R.string.film_caption_6,
+            R.id.TextView6,
+            R.string.film_desript_6,
+            R.drawable.film_x_men_wolverine
+        )
     )
 
     companion object {
@@ -39,10 +67,19 @@ class MainActivity : AppCompatActivity(), CustomDialog.NoticeDialogListener {
     }
 
     private var filmIndex = 0
+    private var themeId = 0
     private val FILM_INDEX_KEY = "FILM_INDEX"
+    private val THEME_KEY = "THEME"
     private val REQ_CODE = 333
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        savedInstanceState?.apply {
+            themeId = getInt(THEME_KEY)
+            if (themeId != R.style.AppTheme && themeId != R.style.NoActionBarTheme) {
+                themeId = R.style.AppTheme
+            }
+            setTheme(themeId)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
     }
@@ -62,7 +99,10 @@ class MainActivity : AppCompatActivity(), CustomDialog.NoticeDialogListener {
 
     // сохранение состояния
     override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState.apply { putInt(FILM_INDEX_KEY, filmIndex) })
+        super.onSaveInstanceState(outState.apply {
+            putInt(FILM_INDEX_KEY, filmIndex)
+            putInt(THEME_KEY, themeId)
+        })
     }
 
     // получение ранее сохраненного состояния
@@ -93,6 +133,14 @@ class MainActivity : AppCompatActivity(), CustomDialog.NoticeDialogListener {
             putExtra(DESCRIPT, curFilm.description)
             putExtra(PICTURE, curFilm.picture)
         }, REQ_CODE)
+    }
+
+    fun onChangeTheme(view: View) {
+        themeId = when (themeId) {
+            R.style.AppTheme -> R.style.NoActionBarTheme
+            else -> R.style.AppTheme
+        }
+        recreate()
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {

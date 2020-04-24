@@ -7,9 +7,9 @@
 
     <GridLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:columnCount="2"
-        android:rowCount="3">
+        android:rowCount="4">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
@@ -244,6 +244,13 @@
                 app:layout_constraintTop_toBottomOf="@id/imageView6" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/buttonChangeTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onChangeTheme"
+            android:text="@string/change_theme" />
 
     </GridLayout>
 

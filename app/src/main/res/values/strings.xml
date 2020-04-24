@@ -17,5 +17,6 @@
     <string name="strLike">Нравится</string>
     <string name="yourReply">Ваш отзыв о фильме</string>
     <string name="sendReply">Послать отзыв</string>
+    <string name="change_theme" translatable="false">Сменить тему</string>
 
 </resources>
