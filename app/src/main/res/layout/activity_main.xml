@@ -1,258 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_main"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity">
 
-    <GridLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/textV"
+        tools:listitem="@layout/film_item" />
+
+    <Button
+        android:id="@+id/textV"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:columnCount="2"
-        android:rowCount="4">
+        android:gravity="center"
+        android:onClick="onFavoritesShowClick"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="Избранное" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/TextView1"
-                style="@style/CaptionStyle"
-                android:layout_marginTop="20dp"
-                android:text="@string/film_caption_1"
-                app:layout_constraintLeft_toLeftOf="@id/imageView1"
-                app:layout_constraintRight_toRightOf="@id/imageView1"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView1"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/TextView1"
-                app:srcCompat="@drawable/film_batman" />
-
-            <Button
-                android:id="@+id/button1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:onClick="onShowDetail"
-                android:tag="0"
-                android:text="@string/str_details"
-                app:layout_constraintLeft_toLeftOf="@id/imageView1"
-                app:layout_constraintRight_toRightOf="@id/imageView1"
-                app:layout_constraintTop_toBottomOf="@id/imageView1" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/TextView2"
-                style="@style/CaptionStyle"
-                android:layout_marginTop="20dp"
-                android:text="@string/film_caption_2"
-                app:layout_constraintLeft_toLeftOf="@id/imageView2"
-                app:layout_constraintRight_toRightOf="@id/imageView2"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/TextView2"
-                app:srcCompat="@drawable/film_pirat" />
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:onClick="onShowDetail"
-                android:tag="1"
-                android:text="@string/str_details"
-                app:layout_constraintLeft_toLeftOf="@id/imageView2"
-                app:layout_constraintRight_toRightOf="@id/imageView2"
-                app:layout_constraintTop_toBottomOf="@id/imageView2" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/TextView3"
-                style="@style/CaptionStyle"
-                android:layout_marginTop="20dp"
-                android:text="@string/film_caption_3"
-                app:layout_constraintLeft_toLeftOf="@id/imageView3"
-                app:layout_constraintRight_toRightOf="@id/imageView3"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView3"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/TextView3"
-                app:srcCompat="@drawable/film_plasch_thor" />
-
-            <Button
-                android:id="@+id/button3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:onClick="onShowDetail"
-                android:tag="2"
-                android:text="@string/str_details"
-                app:layout_constraintLeft_toLeftOf="@id/imageView3"
-                app:layout_constraintRight_toRightOf="@id/imageView3"
-                app:layout_constraintTop_toBottomOf="@id/imageView3" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/TextView4"
-                style="@style/CaptionStyle"
-                android:layout_marginTop="20dp"
-                android:text="@string/film_caption_4"
-                app:layout_constraintLeft_toLeftOf="@id/imageView4"
-                app:layout_constraintRight_toRightOf="@id/imageView4"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/TextView4"
-                app:srcCompat="@drawable/spider_man" />
-
-            <Button
-                android:id="@+id/button4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:onClick="onShowDetail"
-                android:tag="3"
-                android:text="@string/str_details"
-                app:layout_constraintLeft_toLeftOf="@id/imageView4"
-                app:layout_constraintRight_toRightOf="@id/imageView4"
-                app:layout_constraintTop_toBottomOf="@id/imageView4" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/TextView5"
-                style="@style/CaptionStyle"
-                android:layout_marginTop="20dp"
-                android:text="@string/film_caption_5"
-                app:layout_constraintLeft_toLeftOf="@id/imageView5"
-                app:layout_constraintRight_toRightOf="@id/imageView5"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView5"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/TextView5"
-                app:srcCompat="@drawable/film_avatar" />
-
-            <Button
-                android:id="@+id/button5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:onClick="onShowDetail"
-                android:tag="4"
-                android:text="@string/str_details"
-                app:layout_constraintLeft_toLeftOf="@id/imageView5"
-                app:layout_constraintRight_toRightOf="@id/imageView5"
-                app:layout_constraintTop_toBottomOf="@id/imageView5" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/TextView6"
-                style="@style/CaptionStyle"
-                android:layout_marginTop="20dp"
-                android:text="@string/film_caption_6"
-                app:layout_constraintLeft_toLeftOf="@id/imageView6"
-                app:layout_constraintRight_toRightOf="@id/imageView6"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/imageView6"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/TextView6"
-                app:srcCompat="@drawable/film_x_men_wolverine" />
-
-            <Button
-                android:id="@+id/button6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:onClick="onShowDetail"
-                android:tag="5"
-                android:text="@string/str_details"
-                app:layout_constraintLeft_toLeftOf="@id/imageView6"
-                app:layout_constraintRight_toRightOf="@id/imageView6"
-                app:layout_constraintTop_toBottomOf="@id/imageView6" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <Button
-            android:id="@+id/buttonChangeTheme"
-            android:layout_width="400dp"
-            android:layout_height="wrap_content"
-            android:layout_columnSpan="2"
-            android:onClick="onChangeTheme"
-            android:text="@string/change_theme" />
-
-    </GridLayout>
-
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

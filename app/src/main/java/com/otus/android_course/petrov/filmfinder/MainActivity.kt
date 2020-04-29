@@ -2,61 +2,18 @@ package com.otus.android_course.petrov.filmfinder
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
-
-data class FilmAttr(
-    val caption: Int,
-    val captionView: Int,
-    val description: Int,
-    val picture: Int
-) {}
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity(), CustomDialog.NoticeDialogListener {
-
-    private val filmsList: List<FilmAttr> = listOf(
-        FilmAttr(
-            R.string.film_caption_1,
-            R.id.TextView1,
-            R.string.film_desript_1,
-            R.drawable.film_batman
-        ),
-        FilmAttr(
-            R.string.film_caption_2,
-            R.id.TextView2,
-            R.string.film_desript_2,
-            R.drawable.film_pirat
-        ),
-        FilmAttr(
-            R.string.film_caption_3,
-            R.id.TextView3,
-            R.string.film_desript_3,
-            R.drawable.film_plasch_thor
-        ),
-        FilmAttr(
-            R.string.film_caption_4,
-            R.id.TextView4,
-            R.string.film_desript_4,
-            R.drawable.spider_man
-        ),
-        FilmAttr(
-            R.string.film_caption_5,
-            R.id.TextView5,
-            R.string.film_desript_5,
-            R.drawable.film_avatar
-        ),
-        FilmAttr(
-            R.string.film_caption_6,
-            R.id.TextView6,
-            R.string.film_desript_6,
-            R.drawable.film_x_men_wolverine
-        )
-    )
 
     companion object {
         const val CAPTION = "caption"
@@ -64,25 +21,59 @@ class MainActivity : AppCompatActivity(), CustomDialog.NoticeDialogListener {
         const val PICTURE = "picture"
         const val RET_CHECK_BOX_STATE = "ch_box_state"
         const val RET_TEXT = "ret_text"
-        const val FILM_INDEX_KEY = "FILM_INDEX"
-        const val THEME_KEY = "THEME"
         const val REQ_CODE = 333
+        const val FILM_LIST = 1
+        const val FAVORITE_LIST = 2
     }
 
-    private var filmIndex = 0
-    private var themeId = 0
+    lateinit private var recycler : RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        savedInstanceState?.apply {
-            themeId = getInt(THEME_KEY)
-            if (themeId != R.style.AppTheme && themeId != R.style.DarkTheme) {
-                themeId = R.style.AppTheme
-            }
-            setTheme(themeId)
-        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        initRecycler()
+        //      initClickListeners()
     }
+
+    private fun initRecycler() {
+        recycler = findViewById<RecyclerView>(R.id.recyclerView)
+        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        recycler.layoutManager = layoutManager
+        recycler.adapter = FilmAdapter(FILM_LIST, LayoutInflater.from(this), filmItems) { filmItem, position ->
+            startActivityForResult(Intent(this, SecondActivity::class.java).apply {
+                putExtra(CAPTION, filmItem.caption)
+                putExtra(DESCRIPT, filmItem.description)
+                putExtra(PICTURE, filmItem.pictureId)
+            }, REQ_CODE)
+        }
+        /*     recycler.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                     if (layoutManager.findLastVisibleItemPosition() == items.size) {
+                         repeat(4) {
+                             items.add(NewsItem("New item", "----", Color.BLACK))
+                         }
+                         recycler.adapter?.notifyItemRangeChanged(items.size - 4, 4)
+                     }
+                 }
+             })*/
+
+        val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        itemDecoration.setDrawable(getDrawable(R.drawable.divider)!!)
+        recycler.addItemDecoration(itemDecoration)
+    }
+
+    /*  private fun initClickListeners() {
+          findViewById<View>(R.id.addBtn).setOnClickListener {
+              items.add(2, NewsItem("New item", "new item subtitle", Color.MAGENTA))
+              recyclerView.adapter?.notifyItemInserted(2)
+          }
+
+          findViewById<View>(R.id.removeBtn).setOnClickListener {
+              items.removeAt(2)
+              recyclerView.adapter?.notifyItemRemoved(2)
+          }
+      }*/
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQ_CODE) {
@@ -97,53 +88,33 @@ class MainActivity : AppCompatActivity(), CustomDialog.NoticeDialogListener {
         }
     }
 
-    // сохранение состояния
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState.apply {
-            putInt(FILM_INDEX_KEY, filmIndex)
-            putInt(THEME_KEY, themeId)
-        })
-    }
-
-    // получение ранее сохраненного состояния
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        setFilmIndex(savedInstanceState.getInt(FILM_INDEX_KEY))
-    }
-
     override fun onBackPressed() {
         CustomDialog().show(supportFragmentManager, "custom")
     }
 
-    private fun setFilmIndex(idx: Int) {
-        //
-        filmIndex = idx
-        for (film in filmsList) {
-            findViewById<TextView>(film.captionView).setTextColor(resources.getColor(R.color.colorCaption))
-        }
-        findViewById<TextView>(filmsList[idx].captionView).setTextColor(Color.RED)
-    }
-
-    fun onShowDetail(view: View) {
-        setFilmIndex(view.tag.toString().toInt())
-        val curFilm = filmsList[filmIndex]
-        //
-        startActivityForResult(Intent(this, SecondActivity::class.java).apply {
-            putExtra(CAPTION, curFilm.caption)
-            putExtra(DESCRIPT, curFilm.description)
-            putExtra(PICTURE, curFilm.picture)
-        }, REQ_CODE)
-    }
-
-    fun onChangeTheme(view: View) {
-        themeId = when (themeId) {
-            R.style.AppTheme -> R.style.DarkTheme
-            else -> R.style.AppTheme
-        }
-        recreate()
-    }
-
     override fun onDialogPositiveClick(dialog: DialogFragment) {
         finish()
+    }
+
+    fun onFavoriteAddRemoveClick(view: View) {
+        // Индекс фильма в основном списке
+        val fIndex = view.tag.toString().toInt()
+        //
+        filmItems[fIndex].isFavorite.let {
+            if (it) {
+                // Удаление из списка избранного
+                favoriteFilmItems.remove(filmItems[fIndex])
+            } else {
+                // Добавление в список избранного
+                favoriteFilmItems.add(filmItems[fIndex])
+            }
+            filmItems[fIndex].isFavorite = !it
+        }
+        // Оповещение RecyclerView об изменении данных
+        recycler.adapter?.notifyItemChanged(fIndex)
+    }
+
+    fun onFavoritesShowClick(view: View) {
+        startActivity(Intent(this, FavoritesActivity::class.java))
     }
 }

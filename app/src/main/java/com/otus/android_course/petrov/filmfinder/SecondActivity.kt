@@ -18,13 +18,13 @@ class SecondActivity : AppCompatActivity() {
         setContentView(R.layout.activity_second)
         //
         findViewById<TextView>(R.id.textViewCaption).setText(
-            intent.extras?.getInt(MainActivity.CAPTION) ?: 0
+            intent.extras?.getString(MainActivity.CAPTION)!!
         )
         findViewById<TextView>(R.id.textViewDescription).setText(
-            intent.extras?.getInt(MainActivity.DESCRIPT) ?: 0
+            intent.extras?.getString(MainActivity.DESCRIPT)!!
         )
         findViewById<ImageView>(R.id.imageViewFilm).setImageResource(
-            intent.extras?.getInt(MainActivity.PICTURE) ?: 0
+            intent.extras?.getInt(MainActivity.PICTURE)!!
         )
     }
 
