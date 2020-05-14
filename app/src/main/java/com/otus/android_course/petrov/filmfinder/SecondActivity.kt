@@ -17,14 +17,14 @@ class SecondActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
         //
-        findViewById<TextView>(R.id.textViewCaption).setText(
+        findViewById<TextView>(R.id.textViewCaption).text =
             intent.extras?.getString(MainActivity.CAPTION)!!
-        )
-        findViewById<TextView>(R.id.textViewDescription).setText(
+        findViewById<TextView>(R.id.textViewDescription).text =
             intent.extras?.getString(MainActivity.DESCRIPT)!!
-        )
         findViewById<ImageView>(R.id.imageViewFilm).setImageResource(
-            intent.extras?.getInt(MainActivity.PICTURE)!!
+            intent.extras?.getInt(
+                MainActivity.PICTURE
+            )!!
         )
     }
 
@@ -42,16 +42,5 @@ class SecondActivity : AppCompatActivity() {
         if (sendIntent.resolveActivity(packageManager) != null) {
             startActivity(sendIntent)
         }
-    }
-
-    fun onSendResp(view: View) {
-        setResult(Activity.RESULT_OK, Intent().apply {
-            putExtra(
-                MainActivity.RET_CHECK_BOX_STATE,
-                findViewById<CheckBox>(R.id.checkBox).isChecked
-            )
-            putExtra(MainActivity.RET_TEXT, findViewById<TextView>(R.id.editTextComment).text)
-        })
-        finish()
     }
 }

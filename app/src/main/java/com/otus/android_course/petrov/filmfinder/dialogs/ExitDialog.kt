@@ -1,16 +1,13 @@
-package com.otus.android_course.petrov.filmfinder
+package com.otus.android_course.petrov.filmfinder.dialogs
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
 import androidx.fragment.app.DialogFragment
+import com.otus.android_course.petrov.filmfinder.R
 
-class CustomDialog : DialogFragment() {
+class ExitDialog : DialogFragment() {
 
     interface NoticeDialogListener {
         fun onDialogPositiveClick(dialog: DialogFragment)
@@ -23,7 +20,7 @@ class CustomDialog : DialogFragment() {
         try {
             mListener = context as NoticeDialogListener
         } catch (e: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement NoticeDialogListener")
+            throw ClassCastException("$context must implement NoticeDialogListener")
         }
     }
 
@@ -33,10 +30,10 @@ class CustomDialog : DialogFragment() {
                 .setTitle("Завершение работы")
                 .setIcon(R.drawable.ic_warning_black_24dp)
                 .setMessage("Выйти из приложения?")
-                .setPositiveButton("Выход", DialogInterface.OnClickListener { dialog, id ->
+                .setPositiveButton("Выход") { _, _ ->
                     // Send the positive button event back to the host activity
                     mListener.onDialogPositiveClick(this)
-                })
+                }
                 .setNegativeButton("Отмена", null)
                 .create()
         } ?: throw IllegalStateException("Activity cannot be null")
