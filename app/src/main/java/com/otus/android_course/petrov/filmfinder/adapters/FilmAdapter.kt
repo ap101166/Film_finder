@@ -3,16 +3,15 @@ package com.otus.android_course.petrov.filmfinder.adapters
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.otus.android_course.petrov.filmfinder.MainActivity
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.data.FilmItem
-import com.otus.android_course.petrov.filmfinder.viewholders.FavoriteViewHolder
+import com.otus.android_course.petrov.filmfinder.interfaces.OnRecyclersClickListener
 import com.otus.android_course.petrov.filmfinder.viewholders.FilmViewHolder
 
 class FilmAdapter(
     private val inflater: LayoutInflater,
     private val items: List<FilmItem>,
-    val listener: (FilmItem, Int) -> Unit
+    private val listener: OnRecyclersClickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -24,8 +23,9 @@ class FilmAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = items[position]
         if (holder is FilmViewHolder) {
-            holder.bind(item, position)
-            holder.itemView.setOnClickListener { listener(item, position) }
+            holder.bind(item)
+            holder.itemView.setOnClickListener { listener.onFilmListClick(item) }
+            holder.favoriteImage.setOnClickListener { listener.onFavoriteClick(position) }
         }
     }
 }

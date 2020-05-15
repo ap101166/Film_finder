@@ -9,41 +9,35 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.otus.android_course.petrov.filmfinder.adapters.FilmAdapter
+import com.otus.android_course.petrov.filmfinder.data.FilmItem
 import com.otus.android_course.petrov.filmfinder.data.favoriteFilmItems
 import com.otus.android_course.petrov.filmfinder.data.filmItems
 import com.otus.android_course.petrov.filmfinder.dialogs.ExitDialog
+import com.otus.android_course.petrov.filmfinder.interfaces.OnRecyclersClickListener
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), ExitDialog.NoticeDialogListener {
+class MainActivity : AppCompatActivity(), OnRecyclersClickListener,
+    ExitDialog.NoticeDialogListener {
 
     companion object {
         const val CAPTION = "caption"
         const val DESCRIPT = "description"
         const val PICTURE = "picture"
-        const val REQ_CODE = 333
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initListRecycler()
+        initFilmListRecycler()
         //      initClickListeners()
     }
 
-    private fun initListRecycler() {
-        recyclerViewList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        recyclerViewList.adapter =
-            FilmAdapter(
-                LayoutInflater.from(this),
-                filmItems
-            ) { filmItem, _ ->
-                startActivityForResult(Intent(this, SecondActivity::class.java).apply {
-                    putExtra(CAPTION, filmItem.caption)
-                    putExtra(DESCRIPT, filmItem.description)
-                    putExtra(PICTURE, filmItem.pictureId)
-                }, REQ_CODE)
-            }
+    private fun initFilmListRecycler() {
+        recyclerViewFilmList.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        recyclerViewFilmList.adapter = FilmAdapter(LayoutInflater.from(this), filmItems, this as OnRecyclersClickListener)
+
         /*     recycler.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                  override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                      if (layoutManager.findLastVisibleItemPosition() == items.size) {
@@ -55,9 +49,13 @@ class MainActivity : AppCompatActivity(), ExitDialog.NoticeDialogListener {
                  }
              })*/
 
-        val itemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
-        itemDecoration.setDrawable(getDrawable(R.drawable.divider)!!)
-        recyclerViewList.addItemDecoration(itemDecoration)
+        recyclerViewFilmList.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                DividerItemDecoration.VERTICAL
+            ).apply {
+                setDrawable(getDrawable(R.drawable.divider)!!)
+            })
     }
 
     /*  private fun initClickListeners() {
@@ -81,29 +79,29 @@ class MainActivity : AppCompatActivity(), ExitDialog.NoticeDialogListener {
         finish()
     }
 
-    fun onFavoriteAddRemoveClick(view: View) {
-        // Индекс фильма в основном списке
-        val fIndex = view.tag.toString().toInt()
-        //
-        filmItems[fIndex].isFavorite.let {
-            if (it) {
-                // Удаление из списка избранного
-                favoriteFilmItems.remove(
-                    filmItems[fIndex]
-                )
-            } else {
-                // Добавление в список избранного
-                favoriteFilmItems.add(
-                    filmItems[fIndex]
-                )
-            }
-            filmItems[fIndex].isFavorite = !it
-        }
-        // Оповещение RecyclerViewList об изменении данных
-        recyclerViewList.adapter?.notifyItemChanged(fIndex)
-    }
-
     fun onFavoritesShowClick(view: View) {
         startActivity(Intent(this, FavoritesActivity::class.java))
+    }
+
+    override fun onFilmListClick(item: FilmItem) {
+        startActivity(Intent(this, SecondActivity::class.java).apply {
+            putExtra(CAPTION, item.caption)
+            putExtra(DESCRIPT, item.description)
+            putExtra(PICTURE, item.pictureId)
+        })
+    }
+
+    override fun onFavoriteClick(index: Int) {
+        filmItems[index].isFavorite.let {
+            // Удаление/добавление в список избранного
+            if (it) {
+                favoriteFilmItems.remove(filmItems[index])
+            } else {
+                favoriteFilmItems.add(filmItems[index])
+            }
+            filmItems[index].isFavorite = !it
+        }
+        // Оповещение RecyclerViewList об изменении данных
+        recyclerViewFilmList.adapter?.notifyItemChanged(index)
     }
 }

@@ -38,7 +38,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/imageViewFilm"
         app:layout_constraintTop_toBottomOf="@id/textViewCaption"
-        android:onClick="onFavoriteAddRemoveClick"
         tools:ignore="ContentDescription"
         tools:srcCompat="@drawable/ic_favorite_border" />
 
