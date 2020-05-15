@@ -3,7 +3,6 @@ package com.otus.android_course.petrov.filmfinder
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -13,10 +12,9 @@ import com.otus.android_course.petrov.filmfinder.data.FilmItem
 import com.otus.android_course.petrov.filmfinder.data.favoriteFilmItems
 import com.otus.android_course.petrov.filmfinder.data.filmItems
 import com.otus.android_course.petrov.filmfinder.dialogs.ExitDialog
-import com.otus.android_course.petrov.filmfinder.interfaces.OnRecyclersClickListener
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), OnRecyclersClickListener,
+class MainActivity : AppCompatActivity(), FilmAdapter.OnRecyclersClickListener,
     ExitDialog.NoticeDialogListener {
 
     companion object {
@@ -36,7 +34,11 @@ class MainActivity : AppCompatActivity(), OnRecyclersClickListener,
     private fun initFilmListRecycler() {
         recyclerViewFilmList.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        recyclerViewFilmList.adapter = FilmAdapter(LayoutInflater.from(this), filmItems, this as OnRecyclersClickListener)
+        recyclerViewFilmList.adapter = FilmAdapter(
+            LayoutInflater.from(this),
+            filmItems,
+            this as FilmAdapter.OnRecyclersClickListener
+        )
 
         /*     recycler.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                  override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -71,15 +73,14 @@ class MainActivity : AppCompatActivity(), OnRecyclersClickListener,
       }*/
 
     override fun onBackPressed() {
-        ExitDialog()
-            .show(supportFragmentManager, "custom")
+        ExitDialog().show(supportFragmentManager, "custom")
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
         finish()
     }
 
-    fun onFavoritesShowClick(view: View) {
+    fun onFavoritesShowClick() {
         startActivity(Intent(this, FavoritesActivity::class.java))
     }
 
@@ -92,15 +93,13 @@ class MainActivity : AppCompatActivity(), OnRecyclersClickListener,
     }
 
     override fun onFavoriteClick(index: Int) {
-        filmItems[index].isFavorite.let {
-            // Удаление/добавление в список избранного
-            if (it) {
-                favoriteFilmItems.remove(filmItems[index])
-            } else {
-                favoriteFilmItems.add(filmItems[index])
-            }
-            filmItems[index].isFavorite = !it
+        // Удаление/добавление в список избранного
+        if (filmItems[index].isFavorite) {
+            favoriteFilmItems.remove(filmItems[index])
+        } else {
+            favoriteFilmItems.add(filmItems[index])
         }
+        filmItems[index].isFavorite = !filmItems[index].isFavorite
         // Оповещение RecyclerViewList об изменении данных
         recyclerViewFilmList.adapter?.notifyItemChanged(index)
     }
