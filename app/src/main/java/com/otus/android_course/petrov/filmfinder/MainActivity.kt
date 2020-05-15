@@ -2,94 +2,75 @@ package com.otus.android_course.petrov.filmfinder
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.otus.android_course.petrov.filmfinder.adapters.FilmAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.data.FilmItem
 import com.otus.android_course.petrov.filmfinder.data.favoriteFilmItems
 import com.otus.android_course.petrov.filmfinder.data.filmItems
 import com.otus.android_course.petrov.filmfinder.dialogs.ExitDialog
+import com.otus.android_course.petrov.filmfinder.fragments.FavoritesFragment
+import com.otus.android_course.petrov.filmfinder.fragments.FilmDetailsFragment
+import com.otus.android_course.petrov.filmfinder.fragments.FilmListFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), FilmAdapter.OnRecyclersClickListener,
+class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener,
     ExitDialog.NoticeDialogListener {
-
-    companion object {
-        const val CAPTION = "caption"
-        const val DESCRIPT = "description"
-        const val PICTURE = "picture"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        initFilmListRecycler()
-        //      initClickListeners()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragmentContainer, FilmListFragment(), FilmListFragment.TAG)
+            .commit()
+
+        botNavView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.action_map -> {
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, FavoritesFragment(), FavoritesFragment.TAG)
+                        .addToBackStack(null)
+                        .commit()
+                }
+                R.id.action_dial -> {
+                    if (supportFragmentManager.backStackEntryCount > 0) {
+                        supportFragmentManager.popBackStack()
+                    }
+                }
+                R.id.action_mail -> {
+                    Toast.makeText(this, "action_mail", Toast.LENGTH_LONG).show()
+                }
+            }
+            true
+        }
     }
-
-    private fun initFilmListRecycler() {
-        recyclerViewFilmList.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        recyclerViewFilmList.adapter = FilmAdapter(
-            LayoutInflater.from(this),
-            filmItems,
-            this as FilmAdapter.OnRecyclersClickListener
-        )
-
-        /*     recycler.addOnScrollListener(object: RecyclerView.OnScrollListener() {
-                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                     if (layoutManager.findLastVisibleItemPosition() == items.size) {
-                         repeat(4) {
-                             items.add(NewsItem("New item", "----", Color.BLACK))
-                         }
-                         recycler.adapter?.notifyItemRangeChanged(items.size - 4, 4)
-                     }
-                 }
-             })*/
-
-        recyclerViewFilmList.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                DividerItemDecoration.VERTICAL
-            ).apply {
-                setDrawable(getDrawable(R.drawable.divider)!!)
-            })
-    }
-
-    /*  private fun initClickListeners() {
-          findViewById<View>(R.id.addBtn).setOnClickListener {
-              items.add(2, NewsItem("New item", "new item subtitle", Color.MAGENTA))
-              recyclerView.adapter?.notifyItemInserted(2)
-          }
-
-          findViewById<View>(R.id.removeBtn).setOnClickListener {
-              items.removeAt(2)
-              recyclerView.adapter?.notifyItemRemoved(2)
-          }
-      }*/
 
     override fun onBackPressed() {
-        ExitDialog().show(supportFragmentManager, "custom")
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            ExitDialog().show(supportFragmentManager, "custom")
+        }
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
         finish()
     }
 
-    fun onFavoritesShowClick() {
-        startActivity(Intent(this, FavoritesActivity::class.java))
-    }
+//todo    fun onFavoritesShowClick() {
+//        startActivity(Intent(this, FavoritesActivity::class.java))
+//    }
 
     override fun onFilmListClick(item: FilmItem) {
-        startActivity(Intent(this, SecondActivity::class.java).apply {
-            putExtra(CAPTION, item.caption)
-            putExtra(DESCRIPT, item.description)
-            putExtra(PICTURE, item.pictureId)
-        })
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragmentContainer, FilmDetailsFragment.newInstance(item), FilmDetailsFragment.TAG)
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onFavoriteClick(index: Int) {
@@ -100,7 +81,7 @@ class MainActivity : AppCompatActivity(), FilmAdapter.OnRecyclersClickListener,
             favoriteFilmItems.add(filmItems[index])
         }
         filmItems[index].isFavorite = !filmItems[index].isFavorite
-        // Оповещение RecyclerViewList об изменении данных
-        recyclerViewFilmList.adapter?.notifyItemChanged(index)
+        // Оповещение recyclerViewFilmList об изменении данных
+        findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
     }
 }

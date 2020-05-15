@@ -13,7 +13,8 @@
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/spider_man" />
+        app:srcCompat="@drawable/spider_man"
+        tools:ignore="ContentDescription" />
 
     <TextView
         android:id="@+id/textViewDescription"
@@ -31,7 +32,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:drawableEnd="@drawable/ic_sentiment_satisfied_black_24dp"
-        android:onClick="onInviteFriend"
         android:text="@string/strInviteFriend"
         android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
