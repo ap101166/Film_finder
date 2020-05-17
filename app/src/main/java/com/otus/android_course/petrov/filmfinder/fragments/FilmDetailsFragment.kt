@@ -1,5 +1,6 @@
 package com.otus.android_course.petrov.filmfinder.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,10 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.otus.android_course.petrov.filmfinder.MainActivity
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.data.FilmItem
+import com.otus.android_course.petrov.filmfinder.data.filmItems
 
 class FilmDetailsFragment : Fragment() {
 
@@ -30,40 +33,21 @@ class FilmDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //
-        view.findViewById<TextView>(R.id.textViewCaption).text = arguments?.getString(CAPTION)!!
-        view.findViewById<TextView>(R.id.textViewDescription).text = arguments?.getString(DESCRIPT)!!
-        view.findViewById<ImageView>(R.id.imageViewFilm).setImageResource(arguments?.getInt(PICTURE)!!)
-    }
-
-    // Приглашение друга посмотреть фильм
-    fun onInviteFriend(view: View) {
-//todo        // Создание сообщения
-//        val sendIntent = Intent(Intent.ACTION_SEND).apply {
-//            type = "text/plain"
-//            putExtra(
-//                Intent.EXTRA_TEXT,
-//                "Посмотри фильм " + textViewCaption.text
-//            )
-//        }
-//        // Отправка сообщения
-//        if (sendIntent.resolveActivity(packageManager) != null) {
-//            startActivity(sendIntent)
-//        }
+        view.findViewById<Toolbar>(R.id.toolbar).title =
+            filmItems[arguments?.getInt(FILM_INDEX)!!].caption
+        view.findViewById<TextView>(R.id.textViewDescription).text =
+            filmItems[arguments?.getInt(FILM_INDEX)!!].description
+        view.findViewById<ImageView>(R.id.imageViewFilm)
+            .setImageResource(filmItems[arguments?.getInt(FILM_INDEX)!!].pictureId)
     }
 
     companion object {
         const val TAG = "FilmDetailsFragment"
-        const val CAPTION = "caption"
-        const val DESCRIPT = "description"
-        const val PICTURE = "picture"
+        const val FILM_INDEX = "film_index"
 
-        fun newInstance(item: FilmItem) : FilmDetailsFragment {
+        fun newInstance(index: Int): FilmDetailsFragment {
             return FilmDetailsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(CAPTION, item.caption)
-                    putString(DESCRIPT, item.description)
-                    putInt(PICTURE, item.pictureId)
-                }
+                arguments = Bundle().apply { putInt(FILM_INDEX, index) }
             }
         }
     }

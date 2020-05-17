@@ -13,10 +13,5 @@
     <string name="film_caption_5">Аватар</string>
     <string name="film_caption_6">Человек росомаха</string>
     <string name="str_details">Детали</string>
-    <string name="strInviteFriend">Пригласить друга</string>
-    <string name="strLike">Нравится</string>
-    <string name="yourReply">Ваш отзыв о фильме</string>
-    <string name="sendReply">Послать отзыв</string>
-    <string name="change_theme" translatable="false">Сменить тему</string>
 
 </resources>

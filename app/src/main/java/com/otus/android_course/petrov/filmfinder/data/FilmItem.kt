@@ -9,13 +9,16 @@ data class FilmItem(
     var isFavorite: Boolean
 )
 
+data class FavoriteItem(
+    val caption: String,
+    val pictureId: Int
+)
+
 // Список любимых фильмов
 var favoriteFilmItems = mutableListOf(
-    FilmItem(
+    FavoriteItem(
         "Избранное",
-        "",
-        R.drawable.ic_favorite_full,
-        false
+        R.drawable.ic_favorite_full
     )
 )
 

@@ -1,12 +1,12 @@
 package com.otus.android_course.petrov.filmfinder
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
-import com.otus.android_course.petrov.filmfinder.data.FilmItem
+import com.google.android.material.snackbar.Snackbar
+import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
 import com.otus.android_course.petrov.filmfinder.data.favoriteFilmItems
 import com.otus.android_course.petrov.filmfinder.data.filmItems
 import com.otus.android_course.petrov.filmfinder.dialogs.ExitDialog
@@ -61,27 +61,52 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
         finish()
     }
 
-//todo    fun onFavoritesShowClick() {
-//        startActivity(Intent(this, FavoritesActivity::class.java))
-//    }
-
-    override fun onFilmListClick(item: FilmItem) {
+    override fun onFilmListClick(index: Int) {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragmentContainer, FilmDetailsFragment.newInstance(item), FilmDetailsFragment.TAG)
+            .replace(
+                R.id.fragmentContainer,
+                FilmDetailsFragment.newInstance(index),
+                FilmDetailsFragment.TAG
+            )
             .addToBackStack(null)
             .commit()
     }
 
     override fun onFavoriteClick(index: Int) {
-        // Удаление/добавление в список избранного
-        if (filmItems[index].isFavorite) {
-            favoriteFilmItems.remove(filmItems[index])
+        //
+        val str = if (favoriteAddRemove(index)) {
+            "Фильм добавлен"
         } else {
-            favoriteFilmItems.add(filmItems[index])
+            "Фильм удален"
+        }
+        Snackbar.make(findViewById(R.id.fragmentContainer), str, Snackbar.LENGTH_LONG)
+            .setAction("Отмена") {
+                favoriteAddRemove(index)
+            }
+            .show()
+    }
+
+    private fun favoriteAddRemove(index: Int): Boolean {
+        // Удаление/добавление в список избранного
+        val favItem = FavoriteItem(filmItems[index].caption, filmItems[index].pictureId)
+        if (filmItems[index].isFavorite) {
+            favoriteFilmItems.remove(favItem)
+        } else {
+            favoriteFilmItems.add(favItem)
         }
         filmItems[index].isFavorite = !filmItems[index].isFavorite
         // Оповещение recyclerViewFilmList об изменении данных
         findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
+        //
+        return filmItems[index].isFavorite
     }
 }
+
+//Домашнее задание
+//Фрагменты и навигация.
+//1. Переведите свое приложение на единственную Activity и несколько фрагментов
+//2. Для навигации между фрагментами используйте NavigationDrawer или BottomNavigation
+//3. Добавьте CoordinatorLayout + CollapsingToolbar на детальный экран фильма
+//4. Добавьте Snackbar или Toast, сообщающий об успехе добавления\удаления из избранного
+//5. * Добавьте возможность отмены действия в snackbar

@@ -18,7 +18,7 @@ class FilmListFragment : Fragment() {
     private lateinit var mListener: FilmListClickListener
 
     interface FilmListClickListener {
-        fun onFilmListClick(item: FilmItem)
+        fun onFilmListClick(index: Int)
         fun onFavoriteClick(index: Int)
     }
 

@@ -24,7 +24,7 @@ class FilmAdapter(
         val item = items[position]
         if (holder is FilmViewHolder) {
             holder.bind(item)
-            holder.itemView.setOnClickListener { listener.onFilmListClick(item) }
+            holder.itemView.setOnClickListener { listener.onFilmListClick(position) }
             holder.favoriteImage.setOnClickListener { listener.onFavoriteClick(position) }
         }
     }
