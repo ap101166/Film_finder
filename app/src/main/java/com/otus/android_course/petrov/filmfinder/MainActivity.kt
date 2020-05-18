@@ -18,49 +18,64 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener,
     ExitDialog.NoticeDialogListener {
 
+    /**
+    \brief Создание MainActivity
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Запуск фрагмента со списком фильмов
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragmentContainer, FilmListFragment(), FilmListFragment.TAG)
             .commit()
 
+        // Установка обработчиков на BottomNavigation
         botNavView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.action_map -> {
+                // Отображение списка фильмов
+                R.id.action_film_list -> {
+                    if (supportFragmentManager.backStackEntryCount > 0) {
+                        supportFragmentManager.popBackStack()
+                    }
+                }
+                // Отображение списка избранного
+                R.id.action_favorites -> {
                     supportFragmentManager
                         .beginTransaction()
                         .replace(R.id.fragmentContainer, FavoritesFragment(), FavoritesFragment.TAG)
                         .addToBackStack(null)
                         .commit()
                 }
-                R.id.action_dial -> {
-                    if (supportFragmentManager.backStackEntryCount > 0) {
-                        supportFragmentManager.popBackStack()
-                    }
-                }
-                R.id.action_mail -> {
-                    Toast.makeText(this, "action_mail", Toast.LENGTH_LONG).show()
-                }
             }
             true
         }
     }
 
+    /**
+    \brief Обработчик системной кнопки Назад
+     */
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
         } else {
-            ExitDialog().show(supportFragmentManager, "custom")
+            // Отображение диалога завершения работы приложения
+            ExitDialog().show(supportFragmentManager, "ExitDialog")
         }
     }
 
+    /**
+    \brief Подтверждение завершения работы приложения в диалоге
+     */
     override fun onDialogPositiveClick(dialog: DialogFragment) {
         finish()
+
     }
 
+    /**
+    \brief Метод интерфейса FilmListFragment.FilmListClickListener для вывода описания фильма
+     */
     override fun onFilmListClick(index: Int) {
         supportFragmentManager
             .beginTransaction()
@@ -73,6 +88,9 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
             .commit()
     }
 
+    /**
+    \brief Метод интерфейса FilmListFragment.FilmListClickListener для удаления/добавления в список избранного
+     */
     override fun onFavoriteClick(index: Int) {
         //
         val str = if (favoriteAddRemove(index)) {
@@ -87,8 +105,10 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
             .show()
     }
 
+    /**
+    \brief Удаление/добавление в список избранного
+     */
     private fun favoriteAddRemove(index: Int): Boolean {
-        // Удаление/добавление в список избранного
         val favItem = FavoriteItem(filmItems[index].caption, filmItems[index].pictureId)
         if (filmItems[index].isFavorite) {
             favoriteFilmItems.remove(favItem)
@@ -96,17 +116,15 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
             favoriteFilmItems.add(favItem)
         }
         filmItems[index].isFavorite = !filmItems[index].isFavorite
-        // Оповещение recyclerViewFilmList об изменении данных
+        // Оповещение recyclerView об изменении данных
         findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
         //
         return filmItems[index].isFavorite
     }
 }
 
-//Домашнее задание
-//Фрагменты и навигация.
+
 //1. Переведите свое приложение на единственную Activity и несколько фрагментов
 //2. Для навигации между фрагментами используйте NavigationDrawer или BottomNavigation
 //3. Добавьте CoordinatorLayout + CollapsingToolbar на детальный экран фильма
-//4. Добавьте Snackbar или Toast, сообщающий об успехе добавления\удаления из избранного
-//5. * Добавьте возможность отмены действия в snackbar
+

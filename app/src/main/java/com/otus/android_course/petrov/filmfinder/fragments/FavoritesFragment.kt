@@ -13,11 +13,17 @@ import com.otus.android_course.petrov.filmfinder.data.favoriteFilmItems
 
 class FavoritesFragment : Fragment() {
 
+    /**
+    \brief Событие создания фрагмента
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
     }
 
+    /**
+    \brief Создание визуального интерфейса фрагмента
+     */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -26,6 +32,9 @@ class FavoritesFragment : Fragment() {
         return inflater.inflate(R.layout.favorites_fragment, container, false)
     }
 
+    /**
+    \brief Создание списка RecyclerView
+     */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.findViewById<RecyclerView>(R.id.recyclerViewFavorites).layoutManager =

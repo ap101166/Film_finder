@@ -14,12 +14,21 @@ class FilmAdapter(
     private val listener: FilmListFragment.FilmListClickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    /**
+    \brief Создание объекта ViewHolder
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return FilmViewHolder(inflater.inflate(R.layout.film_item, parent, false))
     }
 
+    /**
+    \brief Получение кол-ва элементов в списке
+     */
     override fun getItemCount() = items.size
 
+    /**
+    \brief Наполнение объекта ViewHolder данными
+     */
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = items[position]
         if (holder is FilmViewHolder) {

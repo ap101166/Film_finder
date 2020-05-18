@@ -27,7 +27,7 @@
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewCaption"
-        tools:srcCompat="@drawable/spider_man"
+        tools:srcCompat="@drawable/film_spider_man"
         tools:ignore="ContentDescription" />
 
     <ImageView

@@ -9,12 +9,17 @@ import com.otus.android_course.petrov.filmfinder.R
 
 class ExitDialog : DialogFragment() {
 
+    // Интерфейс для обработки нажатий кнопок диалога
     interface NoticeDialogListener {
         fun onDialogPositiveClick(dialog: DialogFragment)
     }
 
+    // Обработчик нажатия на кнопки
     private lateinit var mListener: NoticeDialogListener
 
+    /**
+    \brief Получение ссылки на обработчик нажатия на кнопки
+     */
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
@@ -24,6 +29,9 @@ class ExitDialog : DialogFragment() {
         }
     }
 
+    /**
+    \brief Создание диалога
+     */
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             AlertDialog.Builder(it)
