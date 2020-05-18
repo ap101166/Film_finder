@@ -6,11 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.adapters.FilmAdapter
-import com.otus.android_course.petrov.filmfinder.data.filmItems
+import com.otus.android_course.petrov.filmfinder.data.allFilmItems
 
 class FilmListFragment : Fragment() {
 
@@ -58,16 +59,19 @@ class FilmListFragment : Fragment() {
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.findViewById<RecyclerView>(R.id.recyclerViewFilmList).layoutManager =
+        val recyclerViewFilm = view.findViewById<RecyclerView>(R.id.recyclerViewFilmList)
+        recyclerViewFilm.layoutManager =
             LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-        view.findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter = FilmAdapter(
-            LayoutInflater.from(activity), filmItems, mListener
+        recyclerViewFilm.adapter = FilmAdapter(
+            LayoutInflater.from(activity), allFilmItems, mListener
         )
-
-//todo        recyclerViewFilmList.addItemDecoration(
-//            DividerItemDecoration(activity, DividerItemDecoration.VERTICAL).apply {
-//                setDrawable(getDrawable(R.drawable.divider)!!)
-//            })
+        recyclerViewFilm.addItemDecoration(
+            DividerItemDecoration(
+                activity,
+                DividerItemDecoration.VERTICAL
+            ).apply {
+                setDrawable(resources.getDrawable(R.drawable.divider, null))
+            })
     }
 
     companion object {

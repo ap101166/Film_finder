@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.otus.android_course.petrov.filmfinder.R
-import com.otus.android_course.petrov.filmfinder.data.filmItems
+import com.otus.android_course.petrov.filmfinder.data.allFilmItems
 
 class FilmDetailsFragment : Fragment() {
 
@@ -39,11 +39,11 @@ class FilmDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         //
         view.findViewById<Toolbar>(R.id.toolbar).title =
-            filmItems[arguments?.getInt(FILM_INDEX)!!].caption
+            allFilmItems[arguments?.getInt(FILM_INDEX)!!].caption
         view.findViewById<TextView>(R.id.textViewDescription).text =
-            filmItems[arguments?.getInt(FILM_INDEX)!!].description
+            allFilmItems[arguments?.getInt(FILM_INDEX)!!].description
         view.findViewById<ImageView>(R.id.imageViewFilm)
-            .setImageResource(filmItems[arguments?.getInt(FILM_INDEX)!!].pictureId)
+            .setImageResource(allFilmItems[arguments?.getInt(FILM_INDEX)!!].pictureId)
     }
 
     companion object {
