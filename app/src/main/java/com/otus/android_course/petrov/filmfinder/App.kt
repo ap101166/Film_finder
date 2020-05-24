@@ -48,7 +48,7 @@ class App : Application() {
 
     companion object {
         //
-        const val BASE_URL = "https://my-json-server.typicode.com/shustreek/demo/"
+        const val BASE_URL = "https://my-json-server.typicode.com/ap101166/Android-base/"
         //
         lateinit var appInstance: App
             private set

@@ -64,6 +64,10 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
             true
         }
 
+   //     swipeRefreshLayout.isRefreshing = false
+        //
+    //    swipeRefreshLayout.setOnRefreshListener { getFilmListFromNet() }
+
         // Получение списка фильмов c сервера
         getFilmListFromNet()
     }
@@ -87,6 +91,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
                     )
                     recyclerViewFilmList.adapter?.notifyDataSetChanged()
                 }
+
                 //
                 override fun onResponse(
                     call: Call<List<FilmModel>?>,
@@ -98,7 +103,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
                                 allFilmItems.add(
                                     FilmItem(
                                         caption = it.title,
-                                        description = it.title + "123",
+                                        description = it.description,
                                         pictureUrl = it.image,
                                         isFavorite = false
                                     )
