@@ -15,19 +15,16 @@ class FilmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(item: FilmItem) {
         caption.text = item.caption
-//        image.setImageResource(item.pictureId)
         favoriteImage.setImageResource(
             if (item.isFavorite) R.drawable.ic_favorite_full
             else R.drawable.ic_favorite_border
         )
-
         Glide.with(image.context)
             .load(item.pictureUrl)
-//todo            .placeholder(R.drawable.ic_image)
-//            .error(R.drawable.ic_error)
+            .placeholder(R.drawable.ic_load_24dp)
+            .error(R.drawable.ic_error_outline_red_24dp)
             .override(image.resources.getDimensionPixelSize(R.dimen.image_size))
             .centerCrop()
             .into(image)
-
     }
 }

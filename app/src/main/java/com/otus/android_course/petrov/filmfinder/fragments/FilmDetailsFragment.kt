@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.data.allFilmItems
 
@@ -42,8 +43,16 @@ class FilmDetailsFragment : Fragment() {
             allFilmItems[arguments?.getInt(FILM_INDEX)!!].caption
         view.findViewById<TextView>(R.id.textViewDescription).text =
             allFilmItems[arguments?.getInt(FILM_INDEX)!!].description
-//        view.findViewById<ImageView>(R.id.imageViewFilm)
-//            .setImageResource(allFilmItems[arguments?.getInt(FILM_INDEX)!!].pictureId)
+
+        val picUrl = allFilmItems[arguments?.getInt(FILM_INDEX)!!].pictureUrl
+        val image = view.findViewById<ImageView>(R.id.imageViewFilm)
+        Glide.with(image.context)
+            .load(picUrl)
+            .placeholder(R.drawable.ic_load_24dp)
+            .error(R.drawable.ic_error_outline_red_24dp)
+            .override(image.resources.getDimensionPixelSize(R.dimen.image_size))
+            .centerCrop()
+            .into(image)
     }
 
     companion object {

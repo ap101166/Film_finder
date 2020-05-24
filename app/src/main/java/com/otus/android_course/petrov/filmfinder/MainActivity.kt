@@ -71,23 +71,21 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
     //
     fun getFilmListFromNet() {
         //
-        allFilmItems.apply {
-            clear()
-            add(
-                FilmItem(
-                    caption = "Название",
-                    description = "Описание",
-                    pictureUrl = "",
-                    isFavorite = false
-                )
-            )
-        }
+        allFilmItems.clear()
         //
         App.appInstance.srvApi.getFilms()
             .enqueue(object : Callback<List<FilmModel>?> {
                 //
                 override fun onFailure(call: Call<List<FilmModel>?>, t: Throwable) {
-
+                    allFilmItems.add(
+                        FilmItem(
+                            caption = "Ошибка загрузки",   //todo
+                            description = "",
+                            pictureUrl = "",
+                            isFavorite = false
+                        )
+                    )
+                    recyclerViewFilmList.adapter?.notifyDataSetChanged()
                 }
                 //
                 override fun onResponse(
