@@ -6,13 +6,19 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
-import com.otus.android_course.petrov.filmfinder.data.favoriteItems
+import com.otus.android_course.petrov.filmfinder.data.FilmItem
 import com.otus.android_course.petrov.filmfinder.data.allFilmItems
+import com.otus.android_course.petrov.filmfinder.data.favoriteItems
 import com.otus.android_course.petrov.filmfinder.dialogs.ExitDialog
 import com.otus.android_course.petrov.filmfinder.fragments.FavoritesFragment
 import com.otus.android_course.petrov.filmfinder.fragments.FilmDetailsFragment
 import com.otus.android_course.petrov.filmfinder.fragments.FilmListFragment
+import com.otus.android_course.petrov.filmfinder.network.FilmModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.film_list_fragment.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener,
     ExitDialog.NoticeDialogListener {
@@ -57,6 +63,53 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
             }
             true
         }
+
+        // Получение списка фильмов c сервера
+        getFilmListFromNet()
+    }
+
+    //
+    fun getFilmListFromNet() {
+        //
+        allFilmItems.apply {
+            clear()
+            add(
+                FilmItem(
+                    caption = "Название",
+                    description = "Описание",
+                    pictureUrl = "",
+                    isFavorite = false
+                )
+            )
+        }
+        //
+        App.appInstance.srvApi.getFilms()
+            .enqueue(object : Callback<List<FilmModel>?> {
+                //
+                override fun onFailure(call: Call<List<FilmModel>?>, t: Throwable) {
+
+                }
+                //
+                override fun onResponse(
+                    call: Call<List<FilmModel>?>,
+                    response: Response<List<FilmModel>?>
+                ) {
+                    if (response.isSuccessful) {
+                        response.body()
+                            ?.forEach {
+                                allFilmItems.add(
+                                    FilmItem(
+                                        caption = it.title,
+                                        description = it.title + "123",
+                                        pictureUrl = it.image,
+                                        isFavorite = false
+                                    )
+                                )
+                            }
+                        recyclerViewFilmList.adapter?.notifyDataSetChanged()
+                    }
+                }
+            })
     }
 
     /**
@@ -97,7 +150,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
     \brief Удаление/добавление в список избранного
      */
     private fun favoriteAddRemove(index: Int): Boolean {
-        val favItem = FavoriteItem(allFilmItems[index].caption, allFilmItems[index].pictureId)
+        val favItem = FavoriteItem(allFilmItems[index].caption, allFilmItems[index].pictureUrl)
         if (allFilmItems[index].isFavorite) {
             favoriteItems.remove(favItem)
         } else {
@@ -130,7 +183,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
         finish()
     }
 
-    companion object{
+    companion object {
         const val LIST_FRAG_NAME = "LIST_FRAG"
         const val DETAIL_FRAG_NAME = "DETAIL_FRAG"
         const val FAVOR_FRAG_NAME = "FAVOR_FRAG"

@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
-                tools:src="@drawable/film_pirat"
+                tools:src="@tools:sample/avatars"
                 app:layout_collapseMode="pin"
                 tools:ignore="ContentDescription" />
 

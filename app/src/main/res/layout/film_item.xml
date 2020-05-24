@@ -29,7 +29,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewCaption"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:srcCompat="@drawable/film_spider_man"
+        tools:src="@tools:sample/avatars"
         tools:ignore="ContentDescription" />
 
     <ImageView

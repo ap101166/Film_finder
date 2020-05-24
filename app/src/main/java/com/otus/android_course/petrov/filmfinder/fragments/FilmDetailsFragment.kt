@@ -42,8 +42,8 @@ class FilmDetailsFragment : Fragment() {
             allFilmItems[arguments?.getInt(FILM_INDEX)!!].caption
         view.findViewById<TextView>(R.id.textViewDescription).text =
             allFilmItems[arguments?.getInt(FILM_INDEX)!!].description
-        view.findViewById<ImageView>(R.id.imageViewFilm)
-            .setImageResource(allFilmItems[arguments?.getInt(FILM_INDEX)!!].pictureId)
+//        view.findViewById<ImageView>(R.id.imageViewFilm)
+//            .setImageResource(allFilmItems[arguments?.getInt(FILM_INDEX)!!].pictureId)
     }
 
     companion object {
