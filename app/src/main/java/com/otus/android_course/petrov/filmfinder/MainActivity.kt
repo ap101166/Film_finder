@@ -1,14 +1,17 @@
 package com.otus.android_course.petrov.filmfinder
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
-import com.otus.android_course.petrov.filmfinder.data.FilmItem
-import com.otus.android_course.petrov.filmfinder.data.allFilmItems
-import com.otus.android_course.petrov.filmfinder.data.favoriteItems
+import com.otus.android_course.petrov.filmfinder.App.Companion.allFilmItems
+import com.otus.android_course.petrov.filmfinder.App.Companion.curPageNumber
+import com.otus.android_course.petrov.filmfinder.App.Companion.enableNetRequest
+import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteItems
+import com.otus.android_course.petrov.filmfinder.data.*
 import com.otus.android_course.petrov.filmfinder.dialogs.ExitDialog
 import com.otus.android_course.petrov.filmfinder.fragments.FavoritesFragment
 import com.otus.android_course.petrov.filmfinder.fragments.FilmDetailsFragment
@@ -63,41 +66,23 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
             }
             true
         }
-
-   //     swipeRefreshLayout.isRefreshing = false
-        //
-    //    swipeRefreshLayout.setOnRefreshListener { getFilmListFromNet() }
-
-        // Получение списка фильмов c сервера
-        getFilmListFromNet()
     }
 
-    //
-    fun getFilmListFromNet() {
+    /**
+    \brief Метод для получения списка фильмов с сервера
+     */
+    fun loadFilmsFromNet() {
         //
-        allFilmItems.clear()
-        //
-        App.appInstance.srvApi.getFilms()
-            .enqueue(object : Callback<List<FilmModel>?> {
-                //
-                override fun onFailure(call: Call<List<FilmModel>?>, t: Throwable) {
-                    allFilmItems.add(
-                        FilmItem(
-                            caption = "Ошибка загрузки",   //todo
-                            description = "",
-                            pictureUrl = "",
-                            isFavorite = false
-                        )
-                    )
-                    recyclerViewFilmList.adapter?.notifyDataSetChanged()
+        App.instance.srvApi.getFilmPage(curPageNumber.toString())
+            .enqueue(object : Callback<List<FilmModel>> {
+                // Callback на ошибку
+                override fun onFailure(call: Call<List<FilmModel>>, t: Throwable) {
+                    Toast.makeText(this@MainActivity, "Ошибка загрузки!", Toast.LENGTH_LONG).show()
+                    swipeRefreshLayout.isRefreshing = false
                 }
-
-                //
-                override fun onResponse(
-                    call: Call<List<FilmModel>?>,
-                    response: Response<List<FilmModel>?>
-                ) {
-                    if (response.isSuccessful) {
+                // Callback на успешное выполнение запроса
+                override fun onResponse(call: Call<List<FilmModel>>, response: Response<List<FilmModel>>) {
+                    if (response.isSuccessful && !response.body()?.isEmpty()!!) {
                         response.body()
                             ?.forEach {
                                 allFilmItems.add(
@@ -110,7 +95,10 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
                                 )
                             }
                         recyclerViewFilmList.adapter?.notifyDataSetChanged()
+                        enableNetRequest = true
+                        curPageNumber++
                     }
+                    swipeRefreshLayout.isRefreshing = false
                 }
             })
     }

@@ -8,9 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteItems
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.adapters.FavoriteAdapter
-import com.otus.android_course.petrov.filmfinder.data.favoriteItems
 
 class FavoritesFragment : Fragment() {
 
@@ -39,17 +39,17 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val recyclerViewFavor = view.findViewById<RecyclerView>(R.id.recyclerViewFavorites)
-        recyclerViewFavor.layoutManager =
-            LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-        recyclerViewFavor.adapter =
-            FavoriteAdapter(LayoutInflater.from(activity), favoriteItems)
-        recyclerViewFavor.addItemDecoration(
-            DividerItemDecoration(
-                activity,
-                DividerItemDecoration.VERTICAL
-            ).apply {
-                setDrawable(resources.getDrawable(R.drawable.divider, null))
-            })
+        recyclerViewFavor.apply {
+            layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+            adapter = FavoriteAdapter(LayoutInflater.from(activity), favoriteItems)
+            addItemDecoration(
+                DividerItemDecoration(
+                    activity,
+                    DividerItemDecoration.VERTICAL
+                ).apply {
+                    setDrawable(resources.getDrawable(R.drawable.divider, null))
+                })
+        }
     }
 
     companion object {

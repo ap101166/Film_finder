@@ -9,8 +9,8 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import com.otus.android_course.petrov.filmfinder.App.Companion.allFilmItems
 import com.otus.android_course.petrov.filmfinder.R
-import com.otus.android_course.petrov.filmfinder.data.allFilmItems
 
 class FilmDetailsFragment : Fragment() {
 

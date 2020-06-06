@@ -41,6 +41,6 @@
         app:layout_constraintStart_toEndOf="@id/imageViewFilm"
         app:layout_constraintTop_toBottomOf="@id/textViewCaption"
         tools:ignore="ContentDescription"
-        tools:srcCompat="@drawable/ic_favorite_border" />
+        tools:src="@drawable/ic_favorite_border" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
