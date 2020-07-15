@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.otus.android_course.petrov.filmfinder.App.Companion.allFilmItems
 import com.otus.android_course.petrov.filmfinder.App.Companion.curPageNumber
-import com.otus.android_course.petrov.filmfinder.App.Companion.enableNetRequest
+import com.otus.android_course.petrov.filmfinder.App.Companion.netRequestEnabled
 import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteItems
 import com.otus.android_course.petrov.filmfinder.data.*
 import com.otus.android_course.petrov.filmfinder.dialogs.ExitDialog
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
     ExitDialog.NoticeDialogListener {
 
     /**
-    \brief Создание MainActivity
+     * \brief Создание MainActivity
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,42 +69,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
     }
 
     /**
-    \brief Метод для получения списка фильмов с сервера
-     */
-    fun loadFilmsFromNet() {
-        //
-        App.instance.srvApi.getFilmPage(curPageNumber.toString())
-            .enqueue(object : Callback<List<FilmModel>> {
-                // Callback на ошибку
-                override fun onFailure(call: Call<List<FilmModel>>, t: Throwable) {
-                    Toast.makeText(this@MainActivity, "Ошибка загрузки!", Toast.LENGTH_LONG).show()
-                    swipeRefreshLayout.isRefreshing = false
-                }
-                // Callback на успешное выполнение запроса
-                override fun onResponse(call: Call<List<FilmModel>>, response: Response<List<FilmModel>>) {
-                    if (response.isSuccessful && !response.body()?.isEmpty()!!) {
-                        response.body()
-                            ?.forEach {
-                                allFilmItems.add(
-                                    FilmItem(
-                                        caption = it.title,
-                                        description = it.description,
-                                        pictureUrl = it.image,
-                                        isFavorite = false
-                                    )
-                                )
-                            }
-                        recyclerViewFilmList.adapter?.notifyDataSetChanged()
-                        enableNetRequest = true
-                        curPageNumber++
-                    }
-                    swipeRefreshLayout.isRefreshing = false
-                }
-            })
-    }
-
-    /**
-    \brief Метод интерфейса FilmListFragment.FilmListClickListener для вывода описания фильма
+     * \brief Метод интерфейса FilmListFragment.FilmListClickListener для вывода описания фильма
      */
     override fun onFilmListClick(index: Int) {
         if (supportFragmentManager.findFragmentByTag(FilmDetailsFragment.TAG) == null) {
@@ -121,7 +86,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
     }
 
     /**
-    \brief Метод интерфейса FilmListFragment.FilmListClickListener для удаления/добавления в список избранного
+     * \brief Метод интерфейса FilmListFragment.FilmListClickListener для удаления/добавления в список избранного
      */
     override fun onFavoriteClick(index: Int) {
         //
@@ -138,7 +103,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
     }
 
     /**
-    \brief Удаление/добавление в список избранного
+     * \brief Удаление/добавление в список избранного
      */
     private fun favoriteAddRemove(index: Int): Boolean {
         val favItem = FavoriteItem(allFilmItems[index].caption, allFilmItems[index].pictureUrl)
@@ -155,7 +120,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
     }
 
     /**
-    \brief Обработчик системной кнопки Назад
+     * \brief Обработчик системной кнопки Назад
      */
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount > 1) {
@@ -168,7 +133,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
     }
 
     /**
-    \brief Подтверждение завершения работы приложения в диалоге
+     * \brief Подтверждение завершения работы приложения в диалоге
      */
     override fun onDialogPositiveClick(dialog: DialogFragment) {
         finish()

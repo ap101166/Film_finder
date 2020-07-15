@@ -15,7 +15,7 @@ import com.otus.android_course.petrov.filmfinder.adapters.FavoriteAdapter
 class FavoritesFragment : Fragment() {
 
     /**
-    \brief Событие создания фрагмента
+     * \brief Событие создания фрагмента
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +23,7 @@ class FavoritesFragment : Fragment() {
     }
 
     /**
-    \brief Создание визуального интерфейса фрагмента
+     * \brief Создание визуального интерфейса фрагмента
      */
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,13 +34,12 @@ class FavoritesFragment : Fragment() {
     }
 
     /**
-    \brief Создание списка RecyclerView
+     * \brief Создание списка RecyclerView
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val recyclerViewFavor = view.findViewById<RecyclerView>(R.id.recyclerViewFavorites)
         recyclerViewFavor.apply {
-            layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
             adapter = FavoriteAdapter(LayoutInflater.from(activity), favoriteItems)
             addItemDecoration(
                 DividerItemDecoration(

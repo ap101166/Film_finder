@@ -15,24 +15,25 @@ class FilmAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     /**
-    \brief Создание объекта ViewHolder
+     * \brief Создание объекта ViewHolder
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return FilmViewHolder(inflater.inflate(R.layout.film_item, parent, false))
     }
 
     /**
-    \brief Получение кол-ва элементов в списке
+     * \brief Получение кол-ва элементов в списке
      */
     override fun getItemCount() = items.size
 
     /**
-    \brief Наполнение объекта ViewHolder данными
+     * \brief Наполнение объекта ViewHolder данными
      */
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = items[position]
         if (holder is FilmViewHolder) {
             holder.bind(item)
+            // Установка обработчиков нажатия на весь элемент и на Избранное
             holder.itemView.setOnClickListener { listener.onFilmListClick(position) }
             holder.favoriteImage.setOnClickListener { listener.onFavoriteClick(position) }
         }

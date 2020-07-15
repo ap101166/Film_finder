@@ -15,7 +15,7 @@ import com.otus.android_course.petrov.filmfinder.R
 class FilmDetailsFragment : Fragment() {
 
     /**
-    \brief Событие создания фрагмента
+     * \brief Событие создания фрагмента
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,7 +23,7 @@ class FilmDetailsFragment : Fragment() {
     }
 
     /**
-    \brief Создание визуального интерфейса фрагмента
+     * \brief Создание визуального интерфейса фрагмента
      */
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,16 +34,17 @@ class FilmDetailsFragment : Fragment() {
     }
 
     /**
-    \brief Создание списка RecyclerView
+     * \brief Отображение информации о фильме
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //
+        // Название фильма
         view.findViewById<Toolbar>(R.id.toolbar).title =
             allFilmItems[arguments?.getInt(FILM_INDEX)!!].caption
+        // Описание фильма
         view.findViewById<TextView>(R.id.textViewDescription).text =
             allFilmItems[arguments?.getInt(FILM_INDEX)!!].description
-
+        // Картинка фильма
         val picUrl = allFilmItems[arguments?.getInt(FILM_INDEX)!!].pictureUrl
         val image = view.findViewById<ImageView>(R.id.imageViewFilm)
         Glide.with(image.context)
@@ -60,7 +61,7 @@ class FilmDetailsFragment : Fragment() {
         const val FILM_INDEX = "film_index"
 
         /**
-        \brief Статический метод создания экземпляра FilmDetailsFragment
+         * \brief Статический метод создания экземпляра FilmDetailsFragment
          */
         fun newInstance(index: Int): FilmDetailsFragment {
             return FilmDetailsFragment().apply {

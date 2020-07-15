@@ -45,9 +45,5 @@ dependencies {
     api "com.squareup.okhttp3:okhttp-urlconnection:3.12.6"
 
     //ImageLoader
-    implementation("com.squareup.picasso:picasso:2.71828") {
-        exclude group: 'com.squareup.okhttp3'
-    }
-
     implementation "com.github.bumptech.glide:glide:4.11.0"
 }

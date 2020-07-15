@@ -29,6 +29,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewCaption"
         tools:ignore="ContentDescription"
-        tools:srcCompat="@drawable/film_spider_man" />
+        tools:srcCompat="@drawable/ic_launcher_foreground" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

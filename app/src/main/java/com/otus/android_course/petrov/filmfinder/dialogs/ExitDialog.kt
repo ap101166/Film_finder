@@ -18,7 +18,7 @@ class ExitDialog : DialogFragment() {
     private lateinit var mListener: NoticeDialogListener
 
     /**
-    \brief Получение ссылки на обработчик нажатия на кнопки
+     * \brief Получение ссылки на обработчик нажатия на кнопки
      */
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -30,7 +30,7 @@ class ExitDialog : DialogFragment() {
     }
 
     /**
-    \brief Создание диалога
+     * \brief Создание диалога
      */
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
