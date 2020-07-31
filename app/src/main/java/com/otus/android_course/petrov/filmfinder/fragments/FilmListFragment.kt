@@ -76,7 +76,7 @@ class FilmListFragment : Fragment() {
         //
         // Получение списка фильмов c сервера при старте приложения
         if (firstTime) {
-            loadFilmsFromNet()
+            loadFilmsFromNet(true)
             firstTime = false
         }
         // Создание recyclerView
@@ -90,7 +90,7 @@ class FilmListFragment : Fragment() {
                         ((recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == allFilmItems.size - 1)
                     ) {
                         netRequestEnabled = false
-                        loadFilmsFromNet()
+                        loadFilmsFromNet(false)
                         Log.d("qqq", "page" + curPageNumber.toString())
                     }
                 }
@@ -110,16 +110,18 @@ class FilmListFragment : Fragment() {
             netRequestEnabled = false
             allFilmItems.clear()
             recyclerViewFilm.adapter?.notifyDataSetChanged()
-            curPageNumber = 1
-            loadFilmsFromNet()
+            loadFilmsFromNet(true)
         }
     }
 
     /**
      * \brief Метод для получения списка фильмов с сервера
      */
-    fun loadFilmsFromNet() {
+    fun loadFilmsFromNet(isReload : Boolean) {
         swipeRefreshLayout.isRefreshing = true
+        // Перезагрузка списка фильмов с начала
+        if (isReload) curPageNumber = 1
+        //
         App.srvApi.getFilmPage(curPageNumber.toString()) // Загрузка текущей страницы
             .enqueue(object : Callback<List<FilmModel>> {
                 // Callback на ошибку
