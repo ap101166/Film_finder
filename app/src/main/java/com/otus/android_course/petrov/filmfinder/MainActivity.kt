@@ -1,27 +1,19 @@
 package com.otus.android_course.petrov.filmfinder
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import com.otus.android_course.petrov.filmfinder.App.Companion.allFilmItems
-import com.otus.android_course.petrov.filmfinder.App.Companion.curPageNumber
-import com.otus.android_course.petrov.filmfinder.App.Companion.netRequestEnabled
-import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteItems
-import com.otus.android_course.petrov.filmfinder.data.*
+import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
+import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteList
+import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
+import com.otus.android_course.petrov.filmfinder.data.FilmItem
 import com.otus.android_course.petrov.filmfinder.dialogs.ExitDialog
 import com.otus.android_course.petrov.filmfinder.fragments.FavoritesFragment
 import com.otus.android_course.petrov.filmfinder.fragments.FilmDetailsFragment
 import com.otus.android_course.petrov.filmfinder.fragments.FilmListFragment
-import com.otus.android_course.petrov.filmfinder.network.FilmModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.film_list_fragment.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener,
     ExitDialog.NoticeDialogListener {
@@ -90,14 +82,17 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
      */
     override fun onFavoriteClick(index: Int) {
         //
-        val str = if (favoriteAddRemove(index)) {
+        val str = if (favoriteAddRemove(filmList[index])) {
             "Фильм добавлен"
         } else {
             "Фильм удален"
         }
+        findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
+        //
         Snackbar.make(findViewById(R.id.fragmentContainer), str, Snackbar.LENGTH_LONG)
             .setAction("Отмена") {
-                favoriteAddRemove(index)
+                favoriteAddRemove(filmList[index])
+                findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
             }
             .show()
     }
@@ -105,18 +100,23 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
     /**
      * \brief Удаление/добавление в список избранного
      */
-    private fun favoriteAddRemove(index: Int): Boolean {
-        val favItem = FavoriteItem(allFilmItems[index].caption, allFilmItems[index].pictureUrl)
-        if (allFilmItems[index].isFavorite) {
-            favoriteItems.remove(favItem)
-        } else {
-            favoriteItems.add(favItem)
-        }
-        allFilmItems[index].isFavorite = !allFilmItems[index].isFavorite
-        // Оповещение recyclerView об изменении данных
-        findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
+    private fun favoriteAddRemove(filmItem: FilmItem): Boolean {
         //
-        return allFilmItems[index].isFavorite
+        filmItem.isFavorite = !filmItem.isFavorite
+        //
+        if (filmItem.isFavorite) {
+            // Добавление в список избранного
+            favoriteList.add(FavoriteItem(filmItem.filmId, filmItem.caption, filmItem.pictureUrl))
+        } else {
+            // Удаление из списка избранного
+            for (favItem in favoriteList) {
+                if (favItem.filmId == filmItem.filmId) {
+                    favoriteList.remove(favItem)
+                    break
+                }
+            }
+        }
+        return filmItem.isFavorite
     }
 
     /**

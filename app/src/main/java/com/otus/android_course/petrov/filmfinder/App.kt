@@ -47,10 +47,10 @@ class App : Application() {
         const val BASE_URL = "https://my-json-server.typicode.com/ap101166/Android-base/"
 
         // Список любимых фильмов
-        var favoriteItems = mutableListOf<FavoriteItem>()
+        var favoriteList = mutableListOf<FavoriteItem>()
 
         // Список всех фильмов
-        val allFilmItems = mutableListOf<FilmItem>()
+        val filmList = mutableListOf<FilmItem>()
 
         // Номер текущей страницы
         var curPageNumber = 1

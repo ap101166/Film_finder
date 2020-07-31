@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.otus.android_course.petrov.filmfinder.App.Companion.allFilmItems
+import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.R
 
 class FilmDetailsFragment : Fragment() {
@@ -40,12 +40,12 @@ class FilmDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // Название фильма
         view.findViewById<Toolbar>(R.id.toolbar).title =
-            allFilmItems[arguments?.getInt(FILM_INDEX)!!].caption
+            filmList[arguments?.getInt(FILM_INDEX)!!].caption
         // Описание фильма
         view.findViewById<TextView>(R.id.textViewDescription).text =
-            allFilmItems[arguments?.getInt(FILM_INDEX)!!].description
+            filmList[arguments?.getInt(FILM_INDEX)!!].description
         // Картинка фильма
-        val picUrl = allFilmItems[arguments?.getInt(FILM_INDEX)!!].pictureUrl
+        val picUrl = filmList[arguments?.getInt(FILM_INDEX)!!].pictureUrl
         val image = view.findViewById<ImageView>(R.id.imageViewFilm)
         Glide.with(image.context)
             .load(picUrl)

@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.App
-import com.otus.android_course.petrov.filmfinder.App.Companion.allFilmItems
-import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteItems
+import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
+import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteList
 import com.otus.android_course.petrov.filmfinder.App.Companion.curPageNumber
 import com.otus.android_course.petrov.filmfinder.App.Companion.netRequestEnabled
 import com.otus.android_course.petrov.filmfinder.MainActivity
@@ -50,7 +50,7 @@ class FilmListFragment : Fragment() {
     }
 
     /**
-     * \brief Событие создания фрагмента
+     * \brief Создание фрагмента
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +73,6 @@ class FilmListFragment : Fragment() {
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //
         // Получение списка фильмов c сервера при старте приложения
         if (firstTime) {
             loadFilmsFromNet(true)
@@ -82,12 +81,12 @@ class FilmListFragment : Fragment() {
         // Создание recyclerView
         val recyclerViewFilm = view.findViewById<RecyclerView>(R.id.recyclerViewFilmList)
         recyclerViewFilm.apply {
-            adapter = FilmAdapter(LayoutInflater.from(activity), allFilmItems, mListener)
+            adapter = FilmAdapter(LayoutInflater.from(activity), filmList, mListener)
             // OnScrollListener для пагинации
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (netRequestEnabled &&
-                        ((recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == allFilmItems.size - 1)
+                        ((recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == filmList.size - 1)
                     ) {
                         netRequestEnabled = false
                         loadFilmsFromNet(false)
@@ -108,7 +107,7 @@ class FilmListFragment : Fragment() {
         swipeRefreshLayout.setOnRefreshListener {
             Log.d("qqq", "swipeRefreshLayout.OnRefreshListener")
             netRequestEnabled = false
-            allFilmItems.clear()
+            filmList.clear()
             recyclerViewFilm.adapter?.notifyDataSetChanged()
             loadFilmsFromNet(true)
         }
@@ -136,21 +135,31 @@ class FilmListFragment : Fragment() {
                     call: Call<List<FilmModel>>,
                     response: Response<List<FilmModel>>
                 ) {
-                    val respSize = response.body()?.size
-                    if (response.isSuccessful && (respSize!! > 0)) {
+                    val respSize: Int = response.body()!!.size
+                    if (response.isSuccessful && (respSize > 0)) {
                         response.body()
-                            ?.forEach {
-                                allFilmItems.add(
+                            ?.forEach { resp ->
+                                // Поиск фильмов с одинаковым id в списке фильмов и списке избранного
+                                var isFav = false
+                                for (favItem in favoriteList) {
+                                    if (favItem.filmId == resp.id) {
+                                        isFav = true
+                                        break
+                                    }
+                                }
+                                // Добавление нового фильма в список
+                                filmList.add(
                                     FilmItem(
-                                        caption = it.title,
-                                        description = it.description,
-                                        pictureUrl = it.image,
-                                        isFavorite = false
+                                        filmId = resp.id,
+                                        caption = resp.title,
+                                        description = resp.description,
+                                        pictureUrl = resp.image,
+                                        isFavorite = isFav
                                     )
                                 )
                             }
                         recyclerViewFilmList.adapter?.notifyItemRangeChanged(
-                            allFilmItems.size - respSize, respSize
+                            filmList.size - respSize, respSize
                         )
                         Log.d("qqq", "onResponse: " + curPageNumber.toString())
                         netRequestEnabled = true
