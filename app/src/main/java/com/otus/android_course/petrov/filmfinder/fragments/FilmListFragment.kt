@@ -2,7 +2,6 @@ package com.otus.android_course.petrov.filmfinder.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,13 +11,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.App
-import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
-import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteList
 import com.otus.android_course.petrov.filmfinder.App.Companion.curPageNumber
+import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteList
+import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.App.Companion.netRequestEnabled
 import com.otus.android_course.petrov.filmfinder.MainActivity
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.adapters.FilmAdapter
+import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
 import com.otus.android_course.petrov.filmfinder.data.FilmItem
 import com.otus.android_course.petrov.filmfinder.network.FilmModel
 import kotlinx.android.synthetic.main.film_list_fragment.*
@@ -90,7 +90,6 @@ class FilmListFragment : Fragment() {
                     ) {
                         netRequestEnabled = false
                         loadFilmsFromNet(false)
-                        Log.d("qqq", "page" + curPageNumber.toString())
                     }
                 }
             })
@@ -105,7 +104,6 @@ class FilmListFragment : Fragment() {
         }
         // Добавление реакции на swipe - обновление списка фильмов
         swipeRefreshLayout.setOnRefreshListener {
-            Log.d("qqq", "swipeRefreshLayout.OnRefreshListener")
             netRequestEnabled = false
             filmList.clear()
             recyclerViewFilm.adapter?.notifyDataSetChanged()
@@ -116,7 +114,7 @@ class FilmListFragment : Fragment() {
     /**
      * \brief Метод для получения списка фильмов с сервера
      */
-    fun loadFilmsFromNet(isReload : Boolean) {
+    fun loadFilmsFromNet(isReload: Boolean) {
         swipeRefreshLayout.isRefreshing = true
         // Перезагрузка списка фильмов с начала
         if (isReload) curPageNumber = 1
@@ -139,11 +137,14 @@ class FilmListFragment : Fragment() {
                     if (response.isSuccessful && (respSize > 0)) {
                         response.body()
                             ?.forEach { resp ->
-                                // Поиск фильмов с одинаковым id в списке фильмов и списке избранного
+                                // Проверка, имется ли загружаемый фильм в списке избранного
                                 var isFav = false
                                 for (favItem in favoriteList) {
                                     if (favItem.filmId == resp.id) {
                                         isFav = true
+                                        // Обновление элементов списка избранного т.к. возможно были изменения
+                                        favItem.caption = resp.title
+                                        favItem.pictureUrl = resp.image
                                         break
                                     }
                                 }
@@ -161,7 +162,6 @@ class FilmListFragment : Fragment() {
                         recyclerViewFilmList.adapter?.notifyItemRangeChanged(
                             filmList.size - respSize, respSize
                         )
-                        Log.d("qqq", "onResponse: " + curPageNumber.toString())
                         netRequestEnabled = true
                         curPageNumber++
                     }

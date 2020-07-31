@@ -10,6 +10,6 @@ data class FilmItem(
 
 data class FavoriteItem(
     val filmId: Int,
-    val caption: String?,
-    val pictureUrl: String?
+    var caption: String?,
+    var pictureUrl: String?
 )
