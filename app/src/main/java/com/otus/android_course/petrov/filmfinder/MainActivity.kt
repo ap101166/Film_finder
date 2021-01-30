@@ -8,7 +8,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteList
 import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
-import com.otus.android_course.petrov.filmfinder.data.FilmItem
 import com.otus.android_course.petrov.filmfinder.dialogs.ExitDialog
 import com.otus.android_course.petrov.filmfinder.fragments.FavoritesFragment
 import com.otus.android_course.petrov.filmfinder.fragments.FilmDetailsFragment
@@ -29,6 +28,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
         if (supportFragmentManager.findFragmentByTag(FilmListFragment.TAG) == null) {
             supportFragmentManager
                 .beginTransaction()
+                .setReorderingAllowed(true)
                 .replace(R.id.fragmentContainer, FilmListFragment(), FilmListFragment.TAG)
                 .addToBackStack(LIST_FRAG_NAME)
                 .commit()
@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
                     if (supportFragmentManager.findFragmentByTag(FavoritesFragment.TAG) == null) {
                         supportFragmentManager
                             .beginTransaction()
+                            .setReorderingAllowed(true)
                             .replace(
                                 R.id.fragmentContainer,
                                 FavoritesFragment(),
@@ -67,6 +68,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
         if (supportFragmentManager.findFragmentByTag(FilmDetailsFragment.TAG) == null) {
             supportFragmentManager
                 .beginTransaction()
+                .setReorderingAllowed(true)
                 .replace(
                     R.id.fragmentContainer,
                     FilmDetailsFragment.newInstance(index),
@@ -82,16 +84,12 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
      */
     override fun onFavoriteClick(index: Int) {
         //
-        val str = if (favoriteAddRemove(filmList[index])) {
-            "Фильм добавлен"
-        } else {
-            "Фильм удален"
-        }
+        val str = favoriteAddRemove(index)
         findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
         //
         Snackbar.make(findViewById(R.id.fragmentContainer), str, Snackbar.LENGTH_LONG)
             .setAction("Отмена") {
-                favoriteAddRemove(filmList[index])
+                favoriteAddRemove(index)
                 findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
             }
             .show()
@@ -100,13 +98,15 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
     /**
      * \brief Удаление/добавление в список избранного
      */
-    private fun favoriteAddRemove(filmItem: FilmItem): Boolean {
+    private fun favoriteAddRemove(filmIdx: Int): String {
         //
+        val filmItem = filmList[filmIdx]
         filmItem.isFavorite = !filmItem.isFavorite
         //
-        if (filmItem.isFavorite) {
+        val retStr = if (filmItem.isFavorite) {
             // Добавление в список избранного
             favoriteList.add(FavoriteItem(filmItem.filmId, filmItem.caption, filmItem.pictureUrl))
+            "Фильм добавлен"
         } else {
             // Удаление из списка избранного
             for (favItem in favoriteList) {
@@ -115,8 +115,9 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
                     break
                 }
             }
+            "Фильм удален"
         }
-        return filmItem.isFavorite
+        return retStr
     }
 
     /**

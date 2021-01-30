@@ -38,17 +38,15 @@ class FilmDetailsFragment : Fragment() {
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val filmIdx : Int = arguments?.getInt(FILM_INDEX)!!
         // Название фильма
-        view.findViewById<Toolbar>(R.id.toolbar).title =
-            filmList[arguments?.getInt(FILM_INDEX)!!].caption
+        view.findViewById<Toolbar>(R.id.toolbar).title = filmList[filmIdx].caption
         // Описание фильма
-        view.findViewById<TextView>(R.id.textViewDescription).text =
-            filmList[arguments?.getInt(FILM_INDEX)!!].description
+        view.findViewById<TextView>(R.id.textViewDescription).text = filmList[filmIdx].description
         // Картинка фильма
-        val picUrl = filmList[arguments?.getInt(FILM_INDEX)!!].pictureUrl
         val image = view.findViewById<ImageView>(R.id.imageViewFilm)
         Glide.with(image.context)
-            .load(picUrl)
+            .load(filmList[filmIdx].pictureUrl)
             .placeholder(R.drawable.ic_load_24dp)
             .error(R.drawable.ic_error_outline_red_24dp)
             .override(image.resources.getDimensionPixelSize(R.dimen.image_size))
