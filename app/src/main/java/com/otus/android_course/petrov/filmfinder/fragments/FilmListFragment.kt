@@ -2,6 +2,7 @@ package com.otus.android_course.petrov.filmfinder.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,15 +11,15 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.otus.android_course.petrov.filmfinder.App
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.otus.android_course.petrov.filmfinder.App.Companion.curPageNumber
 import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteList
 import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.App.Companion.netRequestEnabled
+import com.otus.android_course.petrov.filmfinder.App.Companion.srvApi
 import com.otus.android_course.petrov.filmfinder.MainActivity
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.adapters.FilmAdapter
-import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
 import com.otus.android_course.petrov.filmfinder.data.FilmItem
 import com.otus.android_course.petrov.filmfinder.network.FilmModel
 import kotlinx.android.synthetic.main.film_list_fragment.*
@@ -119,11 +120,11 @@ class FilmListFragment : Fragment() {
         // Перезагрузка списка фильмов с начала
         if (isReload) curPageNumber = 1
         //
-        App.srvApi.getFilmPage(curPageNumber.toString()) // Загрузка текущей страницы
+        srvApi.getFilmPage(curPageNumber.toString()) // Загрузка текущей страницы
             .enqueue(object : Callback<List<FilmModel>> {
                 // Callback на ошибку
                 override fun onFailure(call: Call<List<FilmModel>>, t: Throwable) {
-                    Toast.makeText(activity as MainActivity, "Ошибка загрузки!", Toast.LENGTH_LONG)
+                    Toast.makeText(requireActivity(), getString(R.string.str_load_error), Toast.LENGTH_LONG)
                         .show()
                     swipeRefreshLayout.isRefreshing = false
                 }

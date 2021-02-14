@@ -47,7 +47,7 @@ class App : Application() {
         const val BASE_URL = "https://my-json-server.typicode.com/ap101166/Android-base/"
 
         // Список любимых фильмов
-        var favoriteList = mutableListOf<FavoriteItem>()
+        val favoriteList = mutableListOf<FavoriteItem>()
 
         // Список всех фильмов
         val filmList = mutableListOf<FilmItem>()

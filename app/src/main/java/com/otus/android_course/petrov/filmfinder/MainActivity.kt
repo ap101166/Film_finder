@@ -47,12 +47,8 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
                         supportFragmentManager
                             .beginTransaction()
                             .setReorderingAllowed(true)
-                            .replace(
-                                R.id.fragmentContainer,
-                                FavoritesFragment(),
-                                FavoritesFragment.TAG
-                            )
-                            .addToBackStack(FAVOR_FRAG_NAME)
+                            .replace(R.id.fragmentContainer, FavoritesFragment(),FavoritesFragment.TAG)
+                            .addToBackStack(null)
                             .commit()
                     }
                 }
@@ -74,7 +70,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
                     FilmDetailsFragment.newInstance(index),
                     FilmDetailsFragment.TAG
                 )
-                .addToBackStack(DETAIL_FRAG_NAME)
+                .addToBackStack(null)
                 .commit()
         }
     }
@@ -88,7 +84,7 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
         findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
         //
         Snackbar.make(findViewById(R.id.fragmentContainer), str, Snackbar.LENGTH_LONG)
-            .setAction("Отмена") {
+            .setAction(getString(R.string.strCancel)) {
                 favoriteAddRemove(index)
                 findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
             }
@@ -103,10 +99,10 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
         val filmItem = filmList[filmIdx]
         filmItem.isFavorite = !filmItem.isFavorite
         //
-        val retStr = if (filmItem.isFavorite) {
+        return if (filmItem.isFavorite) {
             // Добавление в список избранного
             favoriteList.add(FavoriteItem(filmItem.filmId, filmItem.caption, filmItem.pictureUrl))
-            "Фильм добавлен"
+            getString(R.string.filmAdded)
         } else {
             // Удаление из списка избранного
             for (favItem in favoriteList) {
@@ -115,9 +111,8 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
                     break
                 }
             }
-            "Фильм удален"
+            getString(R.string.filmDeleted)
         }
-        return retStr
     }
 
     /**
@@ -142,7 +137,5 @@ class MainActivity : AppCompatActivity(), FilmListFragment.FilmListClickListener
 
     companion object {
         const val LIST_FRAG_NAME = "LIST_FRAG"
-        const val DETAIL_FRAG_NAME = "DETAIL_FRAG"
-        const val FAVOR_FRAG_NAME = "FAVOR_FRAG"
     }
 }

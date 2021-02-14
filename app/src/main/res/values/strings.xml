@@ -3,5 +3,9 @@
     <string name="str_details">Детали</string>
     <string name="str_favorites">Избранное</string>
     <string name="str_film_list">Список фильмов</string>
+    <string name="filmDeleted">Фильм удален</string>
+    <string name="filmAdded">Фильм добавлен</string>
+    <string name="strCancel">Отмена</string>
+    <string name="str_load_error">Ошибка загрузки!</string>
 
 </resources>

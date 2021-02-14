@@ -3,4 +3,8 @@
     <string name="str_details">Details</string>
     <string name="str_favorites">Favorites</string>
     <string name="str_film_list">Film list</string>
+    <string name="filmDeleted">Film deleted</string>
+    <string name="filmAdded">Film added</string>
+    <string name="strCancel">Cancel</string>
+    <string name="str_load_error">Loading error</string>
 </resources>
