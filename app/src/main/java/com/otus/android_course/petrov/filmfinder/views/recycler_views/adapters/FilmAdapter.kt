@@ -1,17 +1,18 @@
-package com.otus.android_course.petrov.filmfinder.adapters
+package com.otus.android_course.petrov.filmfinder.views.recycler_views.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.data.FilmItem
-import com.otus.android_course.petrov.filmfinder.fragments.FilmListFragment
-import com.otus.android_course.petrov.filmfinder.viewholders.FilmViewHolder
+import com.otus.android_course.petrov.filmfinder.interfaces.IFilmListClickListener
+import com.otus.android_course.petrov.filmfinder.views.FilmListFragment
+import com.otus.android_course.petrov.filmfinder.views.recycler_views.view_holders.FilmViewHolder
 
 class FilmAdapter(
     private val inflater: LayoutInflater,
     private val items: List<FilmItem>,
-    private val listener: FilmListFragment.FilmListClickListener
+    private val listener: IFilmListClickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     /**

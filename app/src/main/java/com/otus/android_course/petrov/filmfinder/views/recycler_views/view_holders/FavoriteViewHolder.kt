@@ -1,4 +1,4 @@
-package com.otus.android_course.petrov.filmfinder.viewholders
+package com.otus.android_course.petrov.filmfinder.views.recycler_views.view_holders
 
 import android.view.View
 import android.widget.ImageView

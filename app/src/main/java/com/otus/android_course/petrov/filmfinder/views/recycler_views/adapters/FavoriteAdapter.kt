@@ -1,13 +1,11 @@
-package com.otus.android_course.petrov.filmfinder.adapters
+package com.otus.android_course.petrov.filmfinder.views.recycler_views.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
-import com.otus.android_course.petrov.filmfinder.data.FilmItem
-import com.otus.android_course.petrov.filmfinder.viewholders.FavoriteViewHolder
-import com.otus.android_course.petrov.filmfinder.viewholders.FilmViewHolder
+import com.otus.android_course.petrov.filmfinder.views.recycler_views.view_holders.FavoriteViewHolder
 
 class FavoriteAdapter(
     private val inflater: LayoutInflater,

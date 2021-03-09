@@ -1,4 +1,4 @@
-package com.otus.android_course.petrov.filmfinder.fragments
+package com.otus.android_course.petrov.filmfinder.views
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteList
 import com.otus.android_course.petrov.filmfinder.R
-import com.otus.android_course.petrov.filmfinder.adapters.FavoriteAdapter
+import com.otus.android_course.petrov.filmfinder.views.recycler_views.adapters.FavoriteAdapter
 
 class FavoritesFragment : Fragment() {
 

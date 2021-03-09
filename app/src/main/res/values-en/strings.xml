@@ -7,4 +7,7 @@
     <string name="filmAdded">Film added</string>
     <string name="strCancel">Cancel</string>
     <string name="str_load_error">Loading error</string>
+    <string name="strExitApp">Exit from application?</string>
+    <string name="strFinishWork">Finish work</string>
+    <string name="strExit">Exit</string>
 </resources>

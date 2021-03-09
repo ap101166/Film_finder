@@ -1,4 +1,4 @@
-package com.otus.android_course.petrov.filmfinder.dialogs
+package com.otus.android_course.petrov.filmfinder.views
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -10,12 +10,12 @@ import com.otus.android_course.petrov.filmfinder.R
 class ExitDialog : DialogFragment() {
 
     // Интерфейс для обработки нажатий кнопок диалога
-    interface NoticeDialogListener {
+    interface INoticeDialogListener {
         fun onDialogPositiveClick(dialog: DialogFragment)
     }
 
     // Обработчик нажатия на кнопки
-    private lateinit var mListener: NoticeDialogListener
+    private lateinit var mListener: INoticeDialogListener
 
     /**
      * \brief Получение ссылки на обработчик нажатия на кнопки
@@ -23,7 +23,7 @@ class ExitDialog : DialogFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
-            mListener = context as NoticeDialogListener
+            mListener = context as INoticeDialogListener
         } catch (e: ClassCastException) {
             throw ClassCastException("$context must implement NoticeDialogListener")
         }
@@ -35,14 +35,14 @@ class ExitDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             AlertDialog.Builder(it)
-                .setTitle("Завершение работы")
+                .setTitle(getString(R.string.strFinishWork))
                 .setIcon(R.drawable.ic_warning_black_24dp)
-                .setMessage("Выйти из приложения?")
-                .setPositiveButton("Выход") { _, _ ->
+                .setMessage(getString(R.string.strExitApp))
+                .setPositiveButton(getString(R.string.strExit)) { _, _ ->
                     // Send the positive button event back to the host activity
                     mListener.onDialogPositiveClick(this)
                 }
-                .setNegativeButton("Отмена", null)
+                .setNegativeButton(getString(R.string.strCancel), null)
                 .create()
         } ?: throw IllegalStateException("Activity cannot be null")
     }

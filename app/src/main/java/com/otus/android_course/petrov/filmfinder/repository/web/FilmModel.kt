@@ -1,4 +1,4 @@
-package com.otus.android_course.petrov.filmfinder.network
+package com.otus.android_course.petrov.filmfinder.repository.web
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,4 +1,4 @@
-package com.otus.android_course.petrov.filmfinder.fragments
+package com.otus.android_course.petrov.filmfinder.views
 
 import android.os.Bundle
 import android.view.LayoutInflater
