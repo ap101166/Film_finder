@@ -6,9 +6,9 @@ import com.otus.android_course.petrov.filmfinder.data.FilmItem
 
 class App : Application() {
 
-    override fun onCreate() {
-        super.onCreate()
-    }
+//    override fun onCreate() {
+//        super.onCreate()
+//    }
 
     companion object {
 
@@ -16,7 +16,7 @@ class App : Application() {
         val favoriteList = mutableListOf<FavoriteItem>()
 
         // Список всех фильмов
-        val filmList = mutableListOf<FilmItem>()
+            //       val filmList = mutableListOf<FilmItem>()
 
         // Номер текущей страницы
         var curPageNumber = 1

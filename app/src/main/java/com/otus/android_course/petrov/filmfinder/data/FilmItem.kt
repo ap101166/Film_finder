@@ -5,7 +5,7 @@ data class FilmItem(
     val caption: String?,
     val description: String?,
     val pictureUrl: String?,
-    var isFavorite: Boolean
+    var isFavorite: Boolean = false
 )
 
 data class FavoriteItem(

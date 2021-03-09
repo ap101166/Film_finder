@@ -20,7 +20,7 @@ object WebService {
     private const val BASE_URL = "https://my-json-server.typicode.com/ap101166/Android-base/"
 
     init {
-
+        //
         val httpClient = OkHttpClient.Builder()
             .addInterceptor(
                 HttpLoggingInterceptor()
@@ -30,7 +30,7 @@ object WebService {
                         }
                     })
             .build()
-
+        //
         service = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())

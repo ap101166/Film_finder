@@ -1,12 +1,12 @@
 package com.otus.android_course.petrov.filmfinder.views
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -72,13 +72,13 @@ class MainActivity : AppCompatActivity(), ExitDialog.INoticeDialogListener {
             }
         }
 
-        // Установка Observer{} для удаления/добавления в список избранного
+        // Установка Observer{} для отображения удаления/добавления в список избранного
         viewModel.favoritAddRemoveLiveData.observe(this) { index ->
             //
             findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
             //
             val str = getString(
-                when (filmList[index].isFavorite) {
+                when (viewModel.filmListLiveData.value!![index].isFavorite) {
                     true -> R.string.filmAdded
                     false -> R.string.filmDeleted
                 }
