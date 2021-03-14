@@ -65,7 +65,7 @@ class FilmDetailsFragment : Fragment() {
         const val FILM_INDEX = "film_index"
 
         /**
-         * \brief Статический метод создания экземпляра FilmDetailsFragment
+         * \brief Метод создания экземпляра FilmDetailsFragment
          */
         fun newInstance(index: Int): FilmDetailsFragment {
             return FilmDetailsFragment().apply {

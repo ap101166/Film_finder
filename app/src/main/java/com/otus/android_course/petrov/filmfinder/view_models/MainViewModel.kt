@@ -3,6 +3,8 @@ package com.otus.android_course.petrov.filmfinder.view_models
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.App
 import com.otus.android_course.petrov.filmfinder.App.Companion.FILM_LIST_CHANGED
 import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
@@ -10,76 +12,73 @@ import com.otus.android_course.petrov.filmfinder.data.FilmItem
 import com.otus.android_course.petrov.filmfinder.interfaces.IFilmListClickListeners
 import com.otus.android_course.petrov.filmfinder.interfaces.IGetFilmsCallback
 import com.otus.android_course.petrov.filmfinder.repository.FilmRepository
+import kotlinx.android.synthetic.main.film_list_fragment.*
 
 class MainViewModel : ViewModel() {
 
-    private val filmListChangeMutLiveData = MutableLiveData<Int>()
-    private val errorMutLiveData = MutableLiveData<String>()
+    // Разрешение посылки запроса в сеть (для корректной работы onScroll в списке FilmListFragment)
+    private var netRequestEnabled = false
 
-    private val showFilmDetailMutLiveData = MutableLiveData<Int>()
-    private val favoritAddRemoveMutLiveData = MutableLiveData<Int>()
+    // LiveData на обновление и на ошибку загрузки списка фильмов
+    private val filmListChangeMutLiveData = MutableLiveData<Int>()
+    private val errorMutLiveData = MutableLiveData<Int>()
 
     val filmListChangeLiveData: LiveData<Int>
         get() = filmListChangeMutLiveData
 
-    val errorLiveData: LiveData<String>
+    val errorLiveData: LiveData<Int>
         get() = errorMutLiveData
 
-    val showFilmDetailLiveData: LiveData<Int>
-        get() = showFilmDetailMutLiveData
-
-    val favoritAddRemoveLiveData: LiveData<Int>
-        get() = favoritAddRemoveMutLiveData
-
-    // Методы для обработчиков нажатий на элемент списка фильмов
-    val filmClickListeners = object : IFilmListClickListeners {
+    // Метод для добавления/удаления в список избранного
+    fun favoriteSignClick(index: Int) {
         //
-        override fun onFilmItemClick(index: Int) {
-            showFilmDetailMutLiveData.postValue(index)
-        }
-
+        val filmItem = App.filmList[index]
+        filmItem.isFavorite = !filmItem.isFavorite
         //
-        override fun onFavoriteSignClick(index: Int) {
-            //
-            val filmItem = App.filmList[index]
-            filmItem.isFavorite = !filmItem.isFavorite
-            //
-            if (filmItem.isFavorite) {
-                // Добавление в список избранного
-                App.favoriteList.add(FavoriteItem(filmItem.filmId, filmItem.caption, filmItem.pictureUrl))
-            } else {
-                // Удаление из списка избранного
-                for (favItem in App.favoriteList) {
-                    if (favItem.filmId == filmItem.filmId) {
-                        App.favoriteList.remove(favItem)
-                        break
-                    }
+        if (filmItem.isFavorite) {
+            // Добавление в список избранного
+            App.favoriteList.add(FavoriteItem(filmItem.filmId, filmItem.caption, filmItem.pictureUrl))
+        } else {
+            // Удаление из списка избранного
+            for (favItem in App.favoriteList) {
+                if (favItem.filmId == filmItem.filmId) {
+                    App.favoriteList.remove(favItem)
+                    break
                 }
             }
-            //
-            favoritAddRemoveMutLiveData.postValue(index)
         }
     }
 
     //
-    fun getFilmList(doReload: Boolean) {
+    private fun getFilmList(doReload: Boolean) {
         //
         FilmRepository.getFilms(doReload, object : IGetFilmsCallback {
             //
             override fun onSuccess(result: Int) {
                 filmListChangeMutLiveData.postValue(result)
+                netRequestEnabled = true
             }
+
             //
-            override fun onError(error: String) {
+            override fun onError(error: Int) {
                 errorMutLiveData.postValue(error)
             }
         })
     }
 
-    // Реакция на swipe - обновление списка фильмов
-    fun onSwipeRefresh() {
-        App.netRequestEnabled = false
-        getFilmList(true)
+    // Реакция на Scroll в списке фильмов
+    fun onScroll(): Boolean {
+        val res = netRequestEnabled
+        if (netRequestEnabled) {
+            getFilmList(false)
+            netRequestEnabled = false
+        }
+        return res
     }
 
+    // Реакция на swipe - обновление списка фильмов
+    fun onSwipeRefresh() {
+        getFilmList(true)
+        netRequestEnabled = false
+    }
 }

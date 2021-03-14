@@ -8,10 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.otus.android_course.petrov.filmfinder.App
 import com.otus.android_course.petrov.filmfinder.R
+import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
+import com.otus.android_course.petrov.filmfinder.interfaces.IFilmListClickListeners
 import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.film_list_fragment.*
 
-class MainActivity : AppCompatActivity(), ExitDialog.INoticeDialogListener {
+class MainActivity : AppCompatActivity(), IFilmListClickListeners, ExitDialog.INoticeDialogListener {
 
     private val viewModel by lazy {
         ViewModelProvider(this).get(MainViewModel::class.java)
@@ -55,41 +58,47 @@ class MainActivity : AppCompatActivity(), ExitDialog.INoticeDialogListener {
             }
             true
         }
+    }
 
-        // Установка Observer{} для вывода описания фильма во фрагмент FilmDetailsFragment
-        viewModel.showFilmDetailLiveData.observe(this) { index ->
-            if (supportFragmentManager.findFragmentByTag(FilmDetailsFragment.TAG) == null) {
-                supportFragmentManager
-                    .beginTransaction()
-                    .setReorderingAllowed(true)
-                    .replace(
-                        R.id.fragmentContainer,
-                        FilmDetailsFragment.newInstance(index),
-                        FilmDetailsFragment.TAG
-                    )
-                    .addToBackStack(null)
-                    .commit()
+    /**
+     * \brief Метод интерфейса IFilmListClickListeners для вывода описания фильма
+     */
+    override fun onFilmItemClick(index: Int) {
+        if (supportFragmentManager.findFragmentByTag(FilmDetailsFragment.TAG) == null) {
+            supportFragmentManager
+                .beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(
+                    R.id.fragmentContainer,
+                    FilmDetailsFragment.newInstance(index),
+                    FilmDetailsFragment.TAG
+                )
+                .addToBackStack(null)
+                .commit()
+        }
+    }
+
+    /**
+     * \brief Метод интерфейса IFilmListClickListeners для удаления/добавления в список избранного
+     */
+    override fun onFavoriteSignClick(index: Int) {
+        //
+        viewModel.favoriteSignClick(index)
+        recyclerViewFilmList.adapter!!.notifyItemChanged(index)
+        //
+        val str = getString(
+            if (App.filmList[index].isFavorite) {
+                R.string.filmAdded
+            } else {
+                R.string.filmDeleted
             }
-        }
-
-        // Установка Observer{} для отображения удаления/добавления в список избранного
-        viewModel.favoritAddRemoveLiveData.observe(this) { index ->
-            //
-            findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
-            //
-            val str = getString(
-                when (App.filmList[index].isFavorite) {
-                    true -> R.string.filmAdded
-                    false -> R.string.filmDeleted
-                }
-            )
-            Snackbar.make(findViewById(R.id.fragmentContainer), str, Snackbar.LENGTH_LONG)
-                .setAction(getString(R.string.strCancel)) {
-                    viewModel.filmClickListeners.onFavoriteSignClick(index)
-                    findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
-                }
-                .show()
-        }
+        )
+        Snackbar.make(findViewById(R.id.fragmentContainer), str, Snackbar.LENGTH_LONG)
+            .setAction(getString(R.string.strCancel)) {
+                viewModel.favoriteSignClick(index)
+                recyclerViewFilmList.adapter!!.notifyItemChanged(index)
+            }
+            .show()
     }
 
     /**

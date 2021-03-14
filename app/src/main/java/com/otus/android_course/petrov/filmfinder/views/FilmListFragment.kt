@@ -1,5 +1,6 @@
 package com.otus.android_course.petrov.filmfinder.views
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,13 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.App
 import com.otus.android_course.petrov.filmfinder.R
+import com.otus.android_course.petrov.filmfinder.interfaces.IFilmListClickListeners
 import com.otus.android_course.petrov.filmfinder.views.recycler_views.adapters.FilmAdapter
 import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
 import kotlinx.android.synthetic.main.film_list_fragment.*
 
 class FilmListFragment : Fragment() {
 
-//    private var firstTime = true
+    private lateinit var mListeners: IFilmListClickListeners
     private val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
     }
@@ -29,6 +31,18 @@ class FilmListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
+    }
+
+    /**
+     * \brief Получение ссылки на интерфейс обработчиков нажатий на элемент списка фильмов
+     */
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            mListeners = context as IFilmListClickListeners
+        } catch (e: ClassCastException) {
+            throw ClassCastException("$context must implement FilmListClickListener")
+        }
     }
 
     /**
@@ -47,26 +61,20 @@ class FilmListFragment : Fragment() {
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        // Получение списка фильмов c сервера при старте приложения
-//        if (firstTime) {
-//            viewModel.getFilmList(true)
-//            swipeRefreshLayout.isRefreshing = true
-//            firstTime = false
-//        }
+        // Получение списка фильмов c сервера при старте приложения
+//        //   if (firstTime) {
+//        viewModel.getFilmList(true)
+//        swipeRefreshLayout.isRefreshing = true
+//        //        firstTime = false
+//        //    }
         // Создание recyclerView
-        val recyclerViewFilm = view.findViewById<RecyclerView>(R.id.recyclerViewFilmList)
-        val filmAdapter = FilmAdapter(LayoutInflater.from(activity), App.filmList, viewModel.filmClickListeners)
-        recyclerViewFilm.apply {
-            adapter = filmAdapter
-            // OnScrollListener для пагинации
+        recyclerViewFilmList.apply {
+            adapter = FilmAdapter(LayoutInflater.from(activity), App.filmList, mListeners)
+            // OnScroll listener для пагинации
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (App.netRequestEnabled &&
-                        ((recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == App.filmList.size - 1)
-                    ) {
-                        App.netRequestEnabled = false
-                        viewModel.getFilmList(false)
-                        swipeRefreshLayout.isRefreshing = true
+                    if ((recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == App.filmList.size - 1) {
+                        swipeRefreshLayout.isRefreshing = viewModel.onScroll()
                     }
                 }
             })
@@ -77,17 +85,18 @@ class FilmListFragment : Fragment() {
                     DividerItemDecoration.VERTICAL
                 ).apply {
                     setDrawable(resources.getDrawable(R.drawable.divider, null))
-                })
+                }
+            )
         }
 
-        // Добавление реакции на swipe - обновление списка фильмов
+        // Listener на swipe - обновление списка фильмов
         swipeRefreshLayout.setOnRefreshListener {
             viewModel.onSwipeRefresh()
         }
 
         // Observer на обновление списка фильмов
         viewModel.filmListChangeLiveData.observe(requireActivity()) {
-            filmAdapter.notifyDataSetChanged()
+            recyclerViewFilmList.adapter!!.notifyDataSetChanged()
             swipeRefreshLayout.isRefreshing = false
         }
 

@@ -20,8 +20,5 @@ class App : Application() {
 
         // Список всех фильмов
         val filmList = ArrayList<FilmItem>()
-
-        // Разрешение посылки запроса в сеть
-        var netRequestEnabled = false
     }
 }

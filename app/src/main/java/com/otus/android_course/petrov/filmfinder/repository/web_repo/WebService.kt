@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 /**
  * TODO - дабавить Comment
@@ -19,6 +20,9 @@ object WebService {
     // URL сетевого ресурса       TODO - дабавить в Preferences
     private const val BASE_URL = "https://my-json-server.typicode.com/ap101166/Android-base/"
 
+    // Таймаут на получение ответа в секундах   TODO - дабавить в Preferences
+    private const val callTimeOut = 10L
+
     init {
         //
         val httpClient = OkHttpClient.Builder()
@@ -29,6 +33,7 @@ object WebService {
                             level = HttpLoggingInterceptor.Level.BASIC
                         }
                     })
+  //          .connectTimeout(callTimeOut, TimeUnit.SECONDS)    TODO
             .build()
         //
         service = Retrofit.Builder()

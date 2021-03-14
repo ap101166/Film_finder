@@ -2,6 +2,7 @@ package com.otus.android_course.petrov.filmfinder.repository
 
 import com.otus.android_course.petrov.filmfinder.App
 import com.otus.android_course.petrov.filmfinder.App.Companion.FILM_LIST_CHANGED
+import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.data.FilmItem
 import com.otus.android_course.petrov.filmfinder.interfaces.IGetFilmsCallback
 import com.otus.android_course.petrov.filmfinder.repository.web_repo.FilmModel
@@ -14,6 +15,9 @@ object FilmRepository {
 
     // Номер текущей страницы
     private var curPageNumber = 1
+    //
+    const val LOAD_ERROR_1 = 1
+    const val LOAD_ERROR_2 = 2
 
     /**
      * \brief Метод для получения списка фильмов с сервера
@@ -43,8 +47,7 @@ object FilmRepository {
                     response: Response<List<FilmModel>>
                 ) {
                     val tmpList = ArrayList<FilmItem>()
-                    val respSize = response.body()!!.size
-                    if (response.isSuccessful && (respSize > 0)) {
+                    if (response.isSuccessful && (response.body()!!.isNotEmpty())) {
                         response.body()?.forEach { resp ->
                             tmpList.add(
                                 FilmItem(
@@ -55,15 +58,13 @@ object FilmRepository {
                                 )
                             )
                         }
-
-
+                        // Проверка, имеется ли загружаемый фильм в списке избранного
                         for (film in tmpList) {
-                            // Проверка, имеется ли загружаемый фильм в списке избранного
                             var isFav = false
                             for (favItem in App.favoriteList) {
+                                // Обновление элементов списка избранного т.к. возможно были изменения
                                 if (favItem.filmId == film.filmId) {
                                     isFav = true
-                                    // Обновление элементов списка избранного т.к. возможно были изменения
                                     favItem.caption = film.caption
                                     favItem.pictureUrl = film.pictureUrl
                                     break
@@ -73,21 +74,17 @@ object FilmRepository {
                         }
                         //
                         App.filmList.addAll(tmpList)
-
-
+                        //
                         callback.onSuccess(FILM_LIST_CHANGED)
-                        App.netRequestEnabled = true
                         curPageNumber++
                     } else {
-                        // TODO ---
+                        callback.onError(LOAD_ERROR_1)
                     }
                 }
-
                 // Callback на ошибку
                 override fun onFailure(call: Call<List<FilmModel>>, t: Throwable) {
-                    callback.onError("Network error: $t")
+                    callback.onError(LOAD_ERROR_2)
                 }
             })
     }
-
 }
