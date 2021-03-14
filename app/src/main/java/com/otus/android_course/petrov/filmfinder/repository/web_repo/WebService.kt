@@ -1,4 +1,4 @@
-package com.otus.android_course.petrov.filmfinder.repository.web
+package com.otus.android_course.petrov.filmfinder.repository.web_repo
 
 import com.otus.android_course.petrov.filmfinder.BuildConfig
 import okhttp3.OkHttpClient

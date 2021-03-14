@@ -15,13 +15,10 @@ import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.views.recycler_views.adapters.FilmAdapter
 import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
 import kotlinx.android.synthetic.main.film_list_fragment.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class FilmListFragment : Fragment() {
 
-    private var firstTime = true
+//    private var firstTime = true
     private val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
     }
@@ -50,21 +47,22 @@ class FilmListFragment : Fragment() {
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Получение списка фильмов c сервера при старте приложения
-        if (firstTime) {
-            viewModel.getFilmList(true)
-            swipeRefreshLayout.isRefreshing = true
-            firstTime = false
-        }
+//        // Получение списка фильмов c сервера при старте приложения
+//        if (firstTime) {
+//            viewModel.getFilmList(true)
+//            swipeRefreshLayout.isRefreshing = true
+//            firstTime = false
+//        }
         // Создание recyclerView
         val recyclerViewFilm = view.findViewById<RecyclerView>(R.id.recyclerViewFilmList)
+        val filmAdapter = FilmAdapter(LayoutInflater.from(activity), App.filmList, viewModel.filmClickListeners)
         recyclerViewFilm.apply {
-            adapter = FilmAdapter(LayoutInflater.from(activity), viewModel.filmListLiveData.value!!, viewModel.clickListeners)
+            adapter = filmAdapter
             // OnScrollListener для пагинации
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (App.netRequestEnabled &&
-                        ((recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == viewModel.filmListLiveData.value!!.size - 1)
+                        ((recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == App.filmList.size - 1)
                     ) {
                         App.netRequestEnabled = false
                         viewModel.getFilmList(false)
@@ -87,79 +85,19 @@ class FilmListFragment : Fragment() {
             viewModel.onSwipeRefresh()
         }
 
-        //
-        viewModel.filmListLiveData.observe(requireActivity()) {
-            recyclerViewFilm.adapter?.notifyDataSetChanged()
+        // Observer на обновление списка фильмов
+        viewModel.filmListChangeLiveData.observe(requireActivity()) {
+            filmAdapter.notifyDataSetChanged()
             swipeRefreshLayout.isRefreshing = false
         }
 
-        // Установка Observer{}...
+        // Observer на ошибку при загрузке списка фильмов
         viewModel.errorLiveData.observe(requireActivity()) { error ->
-            //
             Toast.makeText(requireActivity(), getString(R.string.str_load_error) + " $error", Toast.LENGTH_LONG)
                 .show()
             swipeRefreshLayout.isRefreshing = false
         }
     }
-
-//    /**
-//     * \brief Метод для получения списка фильмов с сервера
-//     */
-//    fun loadFilmsFromNet(isReload: Boolean) {
-//        swipeRefreshLayout.isRefreshing = true
-//        // Перезагрузка списка фильмов с начала
-//        if (isReload) curPageNumber = 1
-//        //
-//        WebService.service.getFilmPage(curPageNumber.toString()) // Загрузка текущей страницы
-//            .enqueue(object : Callback<List<FilmModel>> {
-//                // Callback на ошибку
-//                override fun onFailure(call: Call<List<FilmModel>>, t: Throwable) {
-//                    Toast.makeText(requireActivity(), getString(R.string.str_load_error), Toast.LENGTH_LONG)
-//                        .show()
-//                    swipeRefreshLayout.isRefreshing = false
-//                }
-//
-//                // Callback на успешное выполнение запроса
-//                override fun onResponse(
-//                    call: Call<List<FilmModel>>,
-//                    response: Response<List<FilmModel>>
-//                ) {
-//                    val respSize: Int = response.body()!!.size
-//                    if (response.isSuccessful && (respSize > 0)) {
-//                        response.body()
-//                            ?.forEach { resp ->
-//                                // Проверка, имется ли загружаемый фильм в списке избранного
-//                                var isFav = false
-//                                for (favItem in favoriteList) {
-//                                    if (favItem.filmId == resp.id) {
-//                                        isFav = true
-//                                        // Обновление элементов списка избранного т.к. возможно были изменения
-//                                        favItem.caption = resp.title
-//                                        favItem.pictureUrl = resp.image
-//                                        break
-//                                    }
-//                                }
-//                                // Добавление нового фильма в список
-//                                filmList.add(
-//                                    FilmItem(
-//                                        filmId = resp.id,
-//                                        caption = resp.title,
-//                                        description = resp.description,
-//                                        pictureUrl = resp.image,
-//                                        isFavorite = isFav
-//                                    )
-//                                )
-//                            }
-//                        recyclerViewFilmList.adapter?.notifyItemRangeChanged(
-//                            filmList.size - respSize, respSize
-//                        )
-//                        netRequestEnabled = true
-//                        curPageNumber++
-//                    }
-//                    swipeRefreshLayout.isRefreshing = false
-//                }
-//            })
-//    }
 
     companion object {
         const val TAG = "FilmListFragment"

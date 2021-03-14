@@ -5,13 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.data.FilmItem
-import com.otus.android_course.petrov.filmfinder.interfaces.IFilmListClickListener
+import com.otus.android_course.petrov.filmfinder.interfaces.IFilmListClickListeners
 import com.otus.android_course.petrov.filmfinder.views.recycler_views.view_holders.FilmViewHolder
 
 class FilmAdapter(
     private val inflater: LayoutInflater,
-    private val items: List<FilmItem>,
-    private val listener: IFilmListClickListener
+    private val items : ArrayList<FilmItem>?,
+    private val listeners: IFilmListClickListeners?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     /**
@@ -24,18 +24,18 @@ class FilmAdapter(
     /**
      * \brief Получение кол-ва элементов в списке
      */
-    override fun getItemCount() = items.size
+    override fun getItemCount() = items!!.size
 
     /**
      * \brief Наполнение объекта ViewHolder данными
      */
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = items[position]
+        val item = items!![position]
         if (holder is FilmViewHolder) {
             holder.bind(item)
             // Установка обработчиков нажатия на весь элемент и на Избранное
-            holder.itemView.setOnClickListener { listener.onFilmListClick(position) }
-            holder.favoriteImage.setOnClickListener { listener.onFavoriteClick(position) }
+            holder.itemView.setOnClickListener { listeners!!.onFilmItemClick(position) }
+            holder.favoriteImage.setOnClickListener { listeners!!.onFavoriteSignClick(position) }
         }
     }
 }

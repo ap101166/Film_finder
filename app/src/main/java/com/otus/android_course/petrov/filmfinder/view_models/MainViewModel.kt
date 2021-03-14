@@ -4,27 +4,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.otus.android_course.petrov.filmfinder.App
+import com.otus.android_course.petrov.filmfinder.App.Companion.FILM_LIST_CHANGED
 import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
 import com.otus.android_course.petrov.filmfinder.data.FilmItem
-import com.otus.android_course.petrov.filmfinder.interfaces.IFilmListClickListener
+import com.otus.android_course.petrov.filmfinder.interfaces.IFilmListClickListeners
 import com.otus.android_course.petrov.filmfinder.interfaces.IGetFilmsCallback
 import com.otus.android_course.petrov.filmfinder.repository.FilmRepository
-import com.otus.android_course.petrov.filmfinder.views.FilmListFragment
 
 class MainViewModel : ViewModel() {
 
-    private val filmListMutLiveData = MutableLiveData<List<FilmItem>>()
-    private val favoriteListMutLiveData = MutableLiveData<List<FavoriteItem>>()
+    private val filmListChangeMutLiveData = MutableLiveData<Int>()
     private val errorMutLiveData = MutableLiveData<String>()
 
     private val showFilmDetailMutLiveData = MutableLiveData<Int>()
     private val favoritAddRemoveMutLiveData = MutableLiveData<Int>()
 
-    val filmListLiveData: LiveData<List<FilmItem>>
-        get() = filmListMutLiveData
-
-    val favoriteListLiveData: LiveData<List<FavoriteItem>>
-        get() = favoriteListMutLiveData
+    val filmListChangeLiveData: LiveData<Int>
+        get() = filmListChangeMutLiveData
 
     val errorLiveData: LiveData<String>
         get() = errorMutLiveData
@@ -35,17 +31,17 @@ class MainViewModel : ViewModel() {
     val favoritAddRemoveLiveData: LiveData<Int>
         get() = favoritAddRemoveMutLiveData
 
-    // Объект для установки Listeners на .....
-    val clickListeners = object : IFilmListClickListener {
+    // Методы для обработчиков нажатий на элемент списка фильмов
+    val filmClickListeners = object : IFilmListClickListeners {
         //
-        override fun onFilmListClick(index: Int) {
+        override fun onFilmItemClick(index: Int) {
             showFilmDetailMutLiveData.postValue(index)
         }
 
         //
-        override fun onFavoriteClick(index: Int) {
+        override fun onFavoriteSignClick(index: Int) {
             //
-            val filmItem = filmListMutLiveData.value!![index]
+            val filmItem = App.filmList[index]
             filmItem.isFavorite = !filmItem.isFavorite
             //
             if (filmItem.isFavorite) {
@@ -66,35 +62,13 @@ class MainViewModel : ViewModel() {
     }
 
     //
-    fun getFilmList(isReload: Boolean) {
-        FilmRepository.loadFilmsFromNet(isReload, object : IGetFilmsCallback {
+    fun getFilmList(doReload: Boolean) {
+        //
+        FilmRepository.getFilms(doReload, object : IGetFilmsCallback {
             //
-            override fun onSuccess(filmList: List<FilmItem>) {
-                //
-                val tmpList = ArrayList<FilmItem>()
-                if (!isReload) {
-                    tmpList.addAll(filmListMutLiveData.value!!)
-                }
-
-                for (film in filmList) {
-                    // Проверка, имеется ли загружаемый фильм в списке избранного
-                    var isFav = false
-                    for (favItem in favoriteListMutLiveData.value!!) {
-                        if (favItem.filmId == film.filmId) {
-                            isFav = true
-                            // Обновление элементов списка избранного т.к. возможно были изменения
-                            favItem.caption = film.caption
-                            favItem.pictureUrl = film.pictureUrl
-                            break
-                        }
-                    }
-                    film.isFavorite = isFav
-                }
-                tmpList.addAll(filmList)
-                //
-                filmListMutLiveData.postValue(tmpList)
+            override fun onSuccess(result: Int) {
+                filmListChangeMutLiveData.postValue(result)
             }
-
             //
             override fun onError(error: String) {
                 errorMutLiveData.postValue(error)

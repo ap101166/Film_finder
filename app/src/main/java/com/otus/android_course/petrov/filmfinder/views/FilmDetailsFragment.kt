@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.otus.android_course.petrov.filmfinder.App
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
 
@@ -44,15 +45,14 @@ class FilmDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val filmIdx : Int = arguments?.getInt(FILM_INDEX)!!
-        val filmLst = viewModel.filmListLiveData.value!!
         // Название фильма
-        view.findViewById<Toolbar>(R.id.toolbar).title = filmLst[filmIdx].caption
+        view.findViewById<Toolbar>(R.id.toolbar).title = App.filmList[filmIdx].caption
         // Описание фильма
-        view.findViewById<TextView>(R.id.textViewDescription).text = filmLst[filmIdx].description
+        view.findViewById<TextView>(R.id.textViewDescription).text = App.filmList[filmIdx].description
         // Картинка фильма
         val image = view.findViewById<ImageView>(R.id.imageViewFilm)
         Glide.with(image.context)
-            .load(filmLst[filmIdx].pictureUrl)
+            .load(App.filmList[filmIdx].pictureUrl)
             .placeholder(R.drawable.ic_load_24dp)
             .error(R.drawable.ic_error_outline_red_24dp)
             .override(image.resources.getDimensionPixelSize(R.dimen.image_size))

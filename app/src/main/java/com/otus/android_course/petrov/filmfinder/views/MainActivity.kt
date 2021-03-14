@@ -1,12 +1,12 @@
 package com.otus.android_course.petrov.filmfinder.views
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.otus.android_course.petrov.filmfinder.App
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -78,14 +78,14 @@ class MainActivity : AppCompatActivity(), ExitDialog.INoticeDialogListener {
             findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
             //
             val str = getString(
-                when (viewModel.filmListLiveData.value!![index].isFavorite) {
+                when (App.filmList[index].isFavorite) {
                     true -> R.string.filmAdded
                     false -> R.string.filmDeleted
                 }
             )
             Snackbar.make(findViewById(R.id.fragmentContainer), str, Snackbar.LENGTH_LONG)
                 .setAction(getString(R.string.strCancel)) {
-                    viewModel.clickListeners.onFavoriteClick(index)
+                    viewModel.filmClickListeners.onFavoriteSignClick(index)
                     findViewById<RecyclerView>(R.id.recyclerViewFilmList).adapter?.notifyItemChanged(index)
                 }
                 .show()

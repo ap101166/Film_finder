@@ -1,4 +1,4 @@
-package com.otus.android_course.petrov.filmfinder.repository.web
+package com.otus.android_course.petrov.filmfinder.repository.web_repo
 
 import retrofit2.Call
 import retrofit2.http.GET
