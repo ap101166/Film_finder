@@ -1,15 +1,17 @@
 package com.otus.android_course.petrov.filmfinder
 
 import android.app.Application
+import androidx.lifecycle.ViewModelProvider
 import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
 import com.otus.android_course.petrov.filmfinder.data.FilmItem
+import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
 import kotlinx.android.synthetic.main.film_list_fragment.*
 
 class App : Application() {
 
-    override fun onCreate() {
-        super.onCreate()
-    }
+//    override fun onCreate() {
+//        super.onCreate()
+//    }
 
     companion object {
 

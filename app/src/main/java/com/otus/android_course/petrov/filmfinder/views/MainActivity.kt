@@ -95,8 +95,7 @@ class MainActivity : AppCompatActivity(), IFilmListClickListeners, ExitDialog.IN
         )
         Snackbar.make(findViewById(R.id.fragmentContainer), str, Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.strCancel)) {
-                viewModel.favoriteSignClick(index)
-                recyclerViewFilmList.adapter!!.notifyItemChanged(index)
+                onFavoriteSignClick(index)
             }
             .show()
     }

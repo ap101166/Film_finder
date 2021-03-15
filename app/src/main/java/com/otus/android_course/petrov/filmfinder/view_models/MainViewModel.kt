@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.film_list_fragment.*
 
 class MainViewModel : ViewModel() {
 
-    // Разрешение посылки запроса в сеть (для корректной работы onScroll в списке FilmListFragment)
+    // Разрешение посылки запроса в сеть (для корректной работы onScroll в FilmListFragment:RecyclerView)
     private var netRequestEnabled = false
 
     // LiveData на обновление и на ошибку загрузки списка фильмов
@@ -64,6 +64,17 @@ class MainViewModel : ViewModel() {
                 errorMutLiveData.postValue(error)
             }
         })
+    }
+
+    //
+    private var fStart = true
+    fun getFilmListOnStart(): Boolean {
+        val res = fStart
+        if (fStart) {
+            onSwipeRefresh()
+            fStart = false
+        }
+        return res
     }
 
     // Реакция на Scroll в списке фильмов

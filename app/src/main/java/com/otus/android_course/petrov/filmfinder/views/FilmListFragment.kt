@@ -20,7 +20,9 @@ import kotlinx.android.synthetic.main.film_list_fragment.*
 
 class FilmListFragment : Fragment() {
 
+    // Обработчики нажатий на элемент списка фильмов
     private lateinit var mListeners: IFilmListClickListeners
+
     private val viewModel by lazy {
         ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
     }
@@ -41,7 +43,7 @@ class FilmListFragment : Fragment() {
         try {
             mListeners = context as IFilmListClickListeners
         } catch (e: ClassCastException) {
-            throw ClassCastException("$context must implement FilmListClickListener")
+            throw ClassCastException("$context must implement IFilmListClickListeners")
         }
     }
 
@@ -62,11 +64,8 @@ class FilmListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Получение списка фильмов c сервера при старте приложения
-//        //   if (firstTime) {
-//        viewModel.getFilmList(true)
-//        swipeRefreshLayout.isRefreshing = true
-//        //        firstTime = false
-//        //    }
+        swipeRefreshLayout.isRefreshing = viewModel.getFilmListOnStart()
+        //
         // Создание recyclerView
         recyclerViewFilmList.apply {
             adapter = FilmAdapter(LayoutInflater.from(activity), App.filmList, mListeners)
