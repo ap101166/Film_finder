@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.otus.android_course.petrov.filmfinder.App
 import com.otus.android_course.petrov.filmfinder.R
+import com.otus.android_course.petrov.filmfinder.data.GlobalObjects.filmList
 import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
 
 class FilmDetailsFragment : Fragment() {
@@ -46,13 +47,13 @@ class FilmDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val filmIdx : Int = arguments?.getInt(FILM_INDEX)!!
         // Название фильма
-        view.findViewById<Toolbar>(R.id.toolbar).title = App.filmList[filmIdx].caption
+        view.findViewById<Toolbar>(R.id.toolbar).title = filmList[filmIdx].caption
         // Описание фильма
-        view.findViewById<TextView>(R.id.textViewDescription).text = App.filmList[filmIdx].description
+        view.findViewById<TextView>(R.id.textViewDescription).text = filmList[filmIdx].description
         // Картинка фильма
         val image = view.findViewById<ImageView>(R.id.imageViewFilm)
         Glide.with(image.context)
-            .load(App.filmList[filmIdx].pictureUrl)
+            .load(filmList[filmIdx].pictureUrl)
             .placeholder(R.drawable.ic_load_24dp)
             .error(R.drawable.ic_error_outline_red_24dp)
             .override(image.resources.getDimensionPixelSize(R.dimen.image_size))

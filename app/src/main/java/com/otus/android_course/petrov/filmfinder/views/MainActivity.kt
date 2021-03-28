@@ -9,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.otus.android_course.petrov.filmfinder.App
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
+import com.otus.android_course.petrov.filmfinder.data.GlobalObjects.filmList
 import com.otus.android_course.petrov.filmfinder.interfaces.IFilmListClickListeners
 import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -87,7 +88,7 @@ class MainActivity : AppCompatActivity(), IFilmListClickListeners, ExitDialog.IN
         recyclerViewFilmList.adapter!!.notifyItemChanged(index)
         //
         val str = getString(
-            if (App.filmList[index].isFavorite) {
+            if (filmList[index].isFavorite) {
                 R.string.filmAdded
             } else {
                 R.string.filmDeleted
@@ -95,7 +96,8 @@ class MainActivity : AppCompatActivity(), IFilmListClickListeners, ExitDialog.IN
         )
         Snackbar.make(findViewById(R.id.fragmentContainer), str, Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.strCancel)) {
-                onFavoriteSignClick(index)
+                viewModel.favoriteSignClick(index)
+                recyclerViewFilmList.adapter!!.notifyItemChanged(index)
             }
             .show()
     }

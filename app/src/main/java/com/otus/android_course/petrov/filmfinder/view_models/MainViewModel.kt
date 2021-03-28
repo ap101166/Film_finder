@@ -3,16 +3,11 @@ package com.otus.android_course.petrov.filmfinder.view_models
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.otus.android_course.petrov.filmfinder.App
-import com.otus.android_course.petrov.filmfinder.App.Companion.FILM_LIST_CHANGED
 import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
-import com.otus.android_course.petrov.filmfinder.data.FilmItem
-import com.otus.android_course.petrov.filmfinder.interfaces.IFilmListClickListeners
+import com.otus.android_course.petrov.filmfinder.data.GlobalObjects.favoriteList
+import com.otus.android_course.petrov.filmfinder.data.GlobalObjects.filmList
 import com.otus.android_course.petrov.filmfinder.interfaces.IGetFilmsCallback
 import com.otus.android_course.petrov.filmfinder.repository.FilmRepository
-import kotlinx.android.synthetic.main.film_list_fragment.*
 
 class MainViewModel : ViewModel() {
 
@@ -22,74 +17,79 @@ class MainViewModel : ViewModel() {
     // LiveData на обновление и на ошибку загрузки списка фильмов
     private val filmListChangeMutLiveData = MutableLiveData<Int>()
     private val errorMutLiveData = MutableLiveData<Int>()
-
-    val filmListChangeLiveData: LiveData<Int>
+    //
+    val filmListHasChangedLiveData: LiveData<Int>
         get() = filmListChangeMutLiveData
-
+    //
     val errorLiveData: LiveData<Int>
         get() = errorMutLiveData
 
-    // Метод для добавления/удаления в список избранного
+    /**
+     * \brief Добавление/удаление в список избранного
+     */
     fun favoriteSignClick(index: Int) {
         //
-        val filmItem = App.filmList[index]
+        val filmItem = filmList[index]
         filmItem.isFavorite = !filmItem.isFavorite
         //
         if (filmItem.isFavorite) {
             // Добавление в список избранного
-            App.favoriteList.add(FavoriteItem(filmItem.filmId, filmItem.caption, filmItem.pictureUrl))
+            favoriteList.add(FavoriteItem(filmItem.filmId, filmItem.caption, filmItem.pictureUrl))
         } else {
             // Удаление из списка избранного
-            for (favItem in App.favoriteList) {
+            for (favItem in favoriteList) {
                 if (favItem.filmId == filmItem.filmId) {
-                    App.favoriteList.remove(favItem)
+                    favoriteList.remove(favItem)
                     break
                 }
             }
         }
     }
 
-    //
+    /**
+     * \brief Получение списка фильмов
+     */
     private fun getFilmList(doReload: Boolean) {
         //
         FilmRepository.getFilms(doReload, object : IGetFilmsCallback {
             //
             override fun onSuccess(result: Int) {
                 filmListChangeMutLiveData.postValue(result)
+                // Очередная страница списка получена, резрешено отправлять запрос не следующую
                 netRequestEnabled = true
             }
-
             //
             override fun onError(error: Int) {
                 errorMutLiveData.postValue(error)
             }
         })
+        // Был послан запрос текущей страницы списка. Блокировка следующих запросов до получения текущей страницы
+        netRequestEnabled = false
     }
 
-    //
-    private var fStart = true
-    fun getFilmListOnStart(): Boolean {
-        val res = fStart
-        if (fStart) {
-            onSwipeRefresh()
-            fStart = false
-        }
-        return res
-    }
-
-    // Реакция на Scroll в списке фильмов
-    fun onScroll(): Boolean {
-        val res = netRequestEnabled
-        if (netRequestEnabled) {
+    /**
+     * \brief Реакция на последнюю позицию в списке фильмов - подгрузка следующей страницы
+     */
+    fun onLastVisibleItemPosition(): Boolean {
+        return if (netRequestEnabled) {
             getFilmList(false)
-            netRequestEnabled = false
-        }
-        return res
+            true
+        } else false
     }
 
-    // Реакция на swipe - обновление списка фильмов
+    /**
+     * \brief Реакция на swipe - обновление списка фильмов
+     */
     fun onSwipeRefresh() {
         getFilmList(true)
-        netRequestEnabled = false
+    }
+
+    /**
+     * \brief Получение списка фильмов при старте приложения
+     */
+    fun onAppStart() {
+        if (filmList.isEmpty()) {
+            getFilmList(true)
+        }
     }
 }
