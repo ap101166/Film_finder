@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity(), IFilmListClickListeners, ExitDialog.IN
     override fun onFavoriteSignClick(index: Int) {
         //
         viewModel.favoriteSignClick(index)
-        recyclerViewFilmList.adapter!!.notifyItemChanged(index)
+        recyclerViewFilmList.adapter?.notifyItemChanged(index)
         //
         val str = getString(
             if (filmList[index].isFavorite) {
@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity(), IFilmListClickListeners, ExitDialog.IN
         Snackbar.make(findViewById(R.id.fragmentContainer), str, Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.strCancel)) {
                 viewModel.favoriteSignClick(index)
-                recyclerViewFilmList.adapter!!.notifyItemChanged(index)
+                recyclerViewFilmList.adapter?.notifyItemChanged(index)
             }
             .show()
     }
