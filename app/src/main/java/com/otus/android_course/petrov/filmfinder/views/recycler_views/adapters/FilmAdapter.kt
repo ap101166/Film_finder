@@ -5,13 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.data.FilmItem
-import com.otus.android_course.petrov.filmfinder.interfaces.IFilmListClickListeners
+import com.otus.android_course.petrov.filmfinder.views.FilmListFragment
 import com.otus.android_course.petrov.filmfinder.views.recycler_views.view_holders.FilmViewHolder
 
 class FilmAdapter(
     private val inflater: LayoutInflater,
     private val items : ArrayList<FilmItem>?,
-    private val listeners: IFilmListClickListeners?
+    private val listeners: FilmListFragment.IFilmListClickListeners?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     /**

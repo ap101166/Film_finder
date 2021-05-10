@@ -10,9 +10,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.otus.android_course.petrov.filmfinder.App
+import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.R
-import com.otus.android_course.petrov.filmfinder.data.GlobalObjects.filmList
 import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
 
 class FilmDetailsFragment : Fragment() {

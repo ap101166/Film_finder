@@ -12,14 +12,21 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.R
-import com.otus.android_course.petrov.filmfinder.data.GlobalObjects.filmList
-import com.otus.android_course.petrov.filmfinder.interfaces.IFilmListClickListeners
+import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.repository.FilmRepository
 import com.otus.android_course.petrov.filmfinder.views.recycler_views.adapters.FilmAdapter
 import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
 import kotlinx.android.synthetic.main.film_list_fragment.*
 
 class FilmListFragment : Fragment() {
+
+    // Интерфейс обработчиков нажатий на элемент списка фильмов
+    interface IFilmListClickListeners {
+        // Метод для вывода описания фильма
+        fun onFilmItemClick(index: Int)
+        // Метод для удаления/добавления в список избранного
+        fun onFavoriteSignClick(index: Int)
+    }
 
     // Обработчики нажатий на элемент списка фильмов
     private lateinit var mListeners: IFilmListClickListeners
@@ -65,10 +72,6 @@ class FilmListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Получение списка фильмов при старте приложения
-        viewModel.onAppStart()
-        swipeRefreshLayout.isRefreshing = true
-
         // Создание recyclerView
         recyclerViewFilmList.apply {
             adapter = FilmAdapter(LayoutInflater.from(activity), filmList, mListeners)
@@ -110,9 +113,11 @@ class FilmListFragment : Fragment() {
                 // Ошибка при загрузке списка
                 Toast.makeText(requireActivity(), getString(R.string.str_load_error) + " $error", Toast.LENGTH_LONG).show()
             }
-            //
             swipeRefreshLayout.isRefreshing = false
         }
+
+        // Получение списка фильмов при старте приложения
+        swipeRefreshLayout.isRefreshing = viewModel.onAppStart()
     }
 
     companion object {

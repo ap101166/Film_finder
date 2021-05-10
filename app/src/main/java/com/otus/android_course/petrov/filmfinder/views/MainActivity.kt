@@ -4,18 +4,14 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import com.otus.android_course.petrov.filmfinder.App
+import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.R
-import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
-import com.otus.android_course.petrov.filmfinder.data.GlobalObjects.filmList
-import com.otus.android_course.petrov.filmfinder.interfaces.IFilmListClickListeners
 import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.film_list_fragment.*
 
-class MainActivity : AppCompatActivity(), IFilmListClickListeners, ExitDialog.INoticeDialogListener {
+class MainActivity : AppCompatActivity(), FilmListFragment.IFilmListClickListeners, ExitDialog.INoticeDialogListener {
 
     private val viewModel by lazy {
         ViewModelProvider(this).get(MainViewModel::class.java)
@@ -47,14 +43,12 @@ class MainActivity : AppCompatActivity(), IFilmListClickListeners, ExitDialog.IN
                 }
                 // Отображение списка избранного
                 R.id.action_favorites -> {
-                    if (supportFragmentManager.findFragmentByTag(FavoritesFragment.TAG) == null) {
-                        supportFragmentManager
-                            .beginTransaction()
-                            .setReorderingAllowed(true)
-                            .replace(R.id.fragmentContainer, FavoritesFragment(), FavoritesFragment.TAG)
-                            .addToBackStack(null)
-                            .commit()
-                    }
+                    supportFragmentManager
+                        .beginTransaction()
+                        .setReorderingAllowed(true)
+                        .replace(R.id.fragmentContainer, FavoritesFragment(), FavoritesFragment.TAG)
+                        .addToBackStack(null)
+                        .commit()
                 }
             }
             true
@@ -65,18 +59,16 @@ class MainActivity : AppCompatActivity(), IFilmListClickListeners, ExitDialog.IN
      * \brief Метод интерфейса IFilmListClickListeners для вывода описания фильма
      */
     override fun onFilmItemClick(index: Int) {
-        if (supportFragmentManager.findFragmentByTag(FilmDetailsFragment.TAG) == null) {
-            supportFragmentManager
-                .beginTransaction()
-                .setReorderingAllowed(true)
-                .replace(
-                    R.id.fragmentContainer,
-                    FilmDetailsFragment.newInstance(index),
-                    FilmDetailsFragment.TAG
-                )
-                .addToBackStack(null)
-                .commit()
-        }
+        supportFragmentManager
+            .beginTransaction()
+            .setReorderingAllowed(true)
+            .replace(
+                R.id.fragmentContainer,
+                FilmDetailsFragment.newInstance(index),
+                FilmDetailsFragment.TAG
+            )
+            .addToBackStack(null)
+            .commit()
     }
 
     /**
@@ -84,8 +76,7 @@ class MainActivity : AppCompatActivity(), IFilmListClickListeners, ExitDialog.IN
      */
     override fun onFavoriteSignClick(index: Int) {
         //
-        viewModel.favoriteSignClick(index)
-        recyclerViewFilmList.adapter?.notifyItemChanged(index)
+        viewModel.favoriteSignClick(filmList[index])
         //
         val str = getString(
             if (filmList[index].isFavorite) {
@@ -96,8 +87,7 @@ class MainActivity : AppCompatActivity(), IFilmListClickListeners, ExitDialog.IN
         )
         Snackbar.make(findViewById(R.id.fragmentContainer), str, Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.strCancel)) {
-                viewModel.favoriteSignClick(index)
-                recyclerViewFilmList.adapter?.notifyItemChanged(index)
+                viewModel.favoriteSignClick(filmList[index])
             }
             .show()
     }

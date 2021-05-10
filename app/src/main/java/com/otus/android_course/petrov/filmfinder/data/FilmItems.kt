@@ -7,9 +7,3 @@ data class FilmItem(
     val pictureUrl: String?,
     var isFavorite: Boolean = false
 )
-
-data class FavoriteItem(
-    val filmId: Int,
-    var caption: String?,
-    var pictureUrl: String?
-)

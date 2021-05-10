@@ -1,7 +1,6 @@
 package com.otus.android_course.petrov.filmfinder.repository.local_db
 
 import androidx.room.*
-import com.otus.android_course.petrov.filmfinder.repository.local_db.entities.FavoriteFilms
 
 @Dao
 interface IFilmDao {
@@ -16,11 +15,11 @@ interface IFilmDao {
     fun delete(favFilm: FavoriteFilms?)
 
     @Query("SELECT * FROM FavoriteFilms")
-    fun getAll(): List<FavoriteFilms?>?
+    fun getAll(): List<FavoriteFilms>
 
-//    @Query("SELECT * FROM Publisher WHERE id = :id")
-//    fun getById(id: Long): Publisher?
-//
+    @Query("SELECT * FROM FavoriteFilms WHERE id = :id")
+    fun getById(id: Long): FavoriteFilms?
+
 //    @Query("SELECT * FROM Publisher WHERE name LIKE :search ")
 //    fun findPublishersWithName(search: String?): List<Publisher?>?
 //

@@ -1,26 +1,39 @@
 package com.otus.android_course.petrov.filmfinder
 
 import android.app.Application
-import androidx.lifecycle.ViewModelProvider
-import com.otus.android_course.petrov.filmfinder.data.FavoriteItem
+import android.util.Log
 import com.otus.android_course.petrov.filmfinder.data.FilmItem
-import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
-import kotlinx.android.synthetic.main.film_list_fragment.*
+import com.otus.android_course.petrov.filmfinder.repository.local_db.Db
+import com.otus.android_course.petrov.filmfinder.repository.local_db.FavoriteFilms
+import java.util.concurrent.Executors
 
 class App : Application() {
- // todo - удалить
-//    override fun onCreate() {
-//        super.onCreate()
-//    }
+    //
+    override fun onCreate() {
+        super.onCreate()
+        appInstance = this
+        // Чтение списка избранного из БД при старте приложения
+        Executors.newSingleThreadScheduledExecutor().execute {
+            Db.getInstance(this)?.getFilmDao()?.getAll()?.let { favoriteList.addAll(it) }
+            Log.d("asd123", "getAll: ${favoriteList.size}")
+        }
+    }
 
-//    companion object {
-//
-//        const val FILM_LIST_CHANGED = 1
-//
-//        // Список любимых фильмов
-//        val favoriteList = ArrayList<FavoriteItem>()
-//
-//        // Список всех фильмов
-//        val filmList = ArrayList<FilmItem>()
-//    }
+    companion object {
+
+        //
+        lateinit var appInstance: Application
+            private set
+
+        // Список любимых фильмов
+        val favoriteList = ArrayList<FavoriteFilms>()
+
+        // Список всех фильмов
+        val filmList = ArrayList<FilmItem>()
+    }
 }
+
+//todo
+// Разобраться как создаются фрагменты
+// Подумать где хранить список фильмов и фаворитов (ViewModel или глобально)
+// Как загружать список фильмов при старте

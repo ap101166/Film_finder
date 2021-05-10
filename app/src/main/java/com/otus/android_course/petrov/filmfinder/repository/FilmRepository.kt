@@ -1,10 +1,11 @@
 package com.otus.android_course.petrov.filmfinder.repository
 
+import com.otus.android_course.petrov.filmfinder.App
 import com.otus.android_course.petrov.filmfinder.data.FilmItem
-import com.otus.android_course.petrov.filmfinder.data.GlobalObjects.FILM_LIST_CHANGED
-import com.otus.android_course.petrov.filmfinder.data.GlobalObjects.favoriteList
-import com.otus.android_course.petrov.filmfinder.data.GlobalObjects.filmList
+import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteList
+import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.interfaces.IGetFilmsCallback
+import com.otus.android_course.petrov.filmfinder.repository.local_db.Db
 import com.otus.android_course.petrov.filmfinder.repository.web.FilmModel
 import com.otus.android_course.petrov.filmfinder.repository.web.WebService
 import retrofit2.Call
@@ -17,6 +18,7 @@ object FilmRepository {
     private var curPageNumber = 1
 
     //
+    const val FILM_LIST_CHANGED = 0
     const val LOAD_ERROR_1 = 1
     const val LOAD_ERROR_2 = 2
     const val EMPTY_RESPONSE = 3
@@ -65,17 +67,21 @@ object FilmRepository {
                             for (film in tmpList) {
                                 var isFav = false
                                 for (favItem in favoriteList) {
-                                    // Обновление элементов списка избранного т.к. возможно были изменения
-                                    if (favItem.filmId == film.filmId) {
+                                    // Проверка на вхождение в список избранного
+                                    if (favItem.id == film.filmId) {
                                         isFav = true
-                                        favItem.caption = film.caption
-                                        favItem.pictureUrl = film.pictureUrl
+                                        // Обновление элемента списка избранного если он изменился
+                                        if ((favItem.caption != film.caption) || (favItem.pictureUrl != film.pictureUrl)) {
+                                            favItem.caption = film.caption
+                                            favItem.pictureUrl = film.pictureUrl
+                                  //          Db.getInstance(App.appInstance)?.getFilmDao()?.update(favItem)
+                                        }
                                         break
                                     }
                                 }
                                 film.isFavorite = isFav
                             }
-                            //
+                            // Добавление загруженной страницы в список фильмов
                             filmList.addAll(tmpList)
                             //
                             callback.onSuccess(FILM_LIST_CHANGED)
