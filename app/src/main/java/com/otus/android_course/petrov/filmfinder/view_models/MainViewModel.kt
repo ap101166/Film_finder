@@ -1,20 +1,14 @@
 package com.otus.android_course.petrov.filmfinder.view_models
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.otus.android_course.petrov.filmfinder.App
-import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteList
 import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.data.FilmItem
 import com.otus.android_course.petrov.filmfinder.interfaces.IGetFilmsCallback
 import com.otus.android_course.petrov.filmfinder.repository.FilmRepository
-import com.otus.android_course.petrov.filmfinder.repository.local_db.Db
-import com.otus.android_course.petrov.filmfinder.repository.local_db.FavoriteFilms
-import java.util.concurrent.Executors
 
-class MainViewModel : ViewModel() {
+class MainViewModel(private val param: Int) : ViewModel() {
 
     // Разрешение посылки запроса в сеть (для корректной работы onScroll в FilmListFragment:RecyclerView)
     private var netRequestEnabled = false
@@ -36,29 +30,7 @@ class MainViewModel : ViewModel() {
      */
     fun favoriteSignClick(filmItem: FilmItem) {
         //
-        filmItem.isFavorite = !filmItem.isFavorite
-        //
-        if (filmItem.isFavorite) {
-            // Добавление в список избранного
-            val tmpFav = FavoriteFilms(filmItem.filmId, filmItem.caption, filmItem.pictureUrl)
-            favoriteList.add(tmpFav)
-            Executors.newSingleThreadScheduledExecutor().execute {
-                Db.getInstance(App.appInstance)?.getFilmDao()?.insert(tmpFav)
-                Log.d("asd123", "insert: ${favoriteList.size}")
-            }
-        } else {
-            // Удаление из списка избранного
-            for (favItem in favoriteList) {
-                if (favItem.id == filmItem.filmId) {
-                    favoriteList.remove(favItem)
-                    Executors.newSingleThreadScheduledExecutor().execute {
-                        Db.getInstance(App.appInstance)?.getFilmDao()?.delete(favItem)
-                        Log.d("asd123", "delete: ${favoriteList.size}")
-                    }
-                    break
-                }
-            }
-        }
+        FilmRepository.addOrRemoveFavorites(filmItem)
         filmListChangeMutLiveData.postValue(FilmRepository.FILM_LIST_CHANGED)
     }
 

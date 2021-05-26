@@ -14,8 +14,7 @@ class App : Application() {
         appInstance = this
         // Чтение списка избранного из БД при старте приложения
         Executors.newSingleThreadScheduledExecutor().execute {
-            Db.getInstance(this)?.getFilmDao()?.getAll()?.let { favoriteList.addAll(it) }
-            Log.d("asd123", "getAll: ${favoriteList.size}")
+            Db.getInstance(this)!!.filmDao().getAll().let { favoriteList.addAll(it) }
         }
     }
 

@@ -30,10 +30,14 @@ object WebService {
         //          .connectTimeout(callTimeOut, TimeUnit.SECONDS)    TODO
         .build()
 
-    val service: WebServiceAPI = Retrofit.Builder()
+    private val service: WebServiceAPI = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .client(httpClient)
         .build()
         .create(WebServiceAPI::class.java)
+
+    fun getService(): WebServiceAPI {
+        return service
+    }
 }

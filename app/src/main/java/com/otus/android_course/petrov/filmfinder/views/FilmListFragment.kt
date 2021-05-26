@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.repository.FilmRepository
+import com.otus.android_course.petrov.filmfinder.view_models.MainFactory
 import com.otus.android_course.petrov.filmfinder.views.recycler_views.adapters.FilmAdapter
 import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
 import kotlinx.android.synthetic.main.film_list_fragment.*
@@ -32,7 +33,7 @@ class FilmListFragment : Fragment() {
     private lateinit var mListeners: IFilmListClickListeners
 
     private val viewModel by lazy {
-        ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
+        ViewModelProvider(requireActivity(),MainFactory(11)).get(MainViewModel::class.java)
     }
 
     /**

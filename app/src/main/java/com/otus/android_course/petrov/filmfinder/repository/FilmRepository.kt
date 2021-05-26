@@ -6,11 +6,13 @@ import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteList
 import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.interfaces.IGetFilmsCallback
 import com.otus.android_course.petrov.filmfinder.repository.local_db.Db
+import com.otus.android_course.petrov.filmfinder.repository.local_db.FavoriteFilms
 import com.otus.android_course.petrov.filmfinder.repository.web.FilmModel
 import com.otus.android_course.petrov.filmfinder.repository.web.WebService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.concurrent.Executors
 
 object FilmRepository {
 
@@ -43,7 +45,7 @@ object FilmRepository {
             curPageNumber = 1
         }
         // Загрузка текущей страницы
-        WebService.service.getFilmPage(curPageNumber.toString())
+        WebService.getService().getFilmPage(curPageNumber.toString())
             .enqueue(object : Callback<List<FilmModel>> {
                 // Callback на успешное выполнение запроса
                 override fun onResponse(
@@ -74,7 +76,7 @@ object FilmRepository {
                                         if ((favItem.caption != film.caption) || (favItem.pictureUrl != film.pictureUrl)) {
                                             favItem.caption = film.caption
                                             favItem.pictureUrl = film.pictureUrl
-                                  //          Db.getInstance(App.appInstance)?.getFilmDao()?.update(favItem)
+                                            //          Db.getInstance(App.appInstance)?.getFilmDao()?.update(favItem)
                                         }
                                         break
                                     }
@@ -99,5 +101,33 @@ object FilmRepository {
                     callback.onError(LOAD_ERROR_2)
                 }
             })
+    }
+
+    /**
+     * \brief Метод для добавления/удаления в список избранного
+     */
+    fun addOrRemoveFavorites(filmItem: FilmItem) {
+        //
+        filmItem.isFavorite = !filmItem.isFavorite
+        //
+        if (filmItem.isFavorite) {
+            // Добавление в список избранного
+            val tmpFav = FavoriteFilms(filmItem.filmId, filmItem.caption, filmItem.pictureUrl)
+            favoriteList.add(tmpFav)
+            Executors.newSingleThreadScheduledExecutor().execute {
+                Db.getInstance(App.appInstance)!!.filmDao().insert(tmpFav)
+            }
+        } else {
+            // Удаление из списка избранного
+            for (favItem in favoriteList) {
+                if (favItem.id == filmItem.filmId) {
+                    favoriteList.remove(favItem)
+                    Executors.newSingleThreadScheduledExecutor().execute {
+                        Db.getInstance(App.appInstance)!!.filmDao().delete(favItem)
+                    }
+                    break
+                }
+            }
+        }
     }
 }

@@ -1,7 +1,10 @@
 package com.otus.android_course.petrov.filmfinder.repository.local_db
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 object Db {
 
@@ -14,10 +17,10 @@ object Db {
                     context,
                     AppDb::class.java, "film_finder.db"
                 )
-       //           .allowMainThreadQueries()
-       //             .fallbackToDestructiveMigration()
-       //             .addMigrations(MIGRATION_1_2)
-       //             .addCallback(DbCallback(context))
+                    //.allowMainThreadQueries()
+                    //.fallbackToDestructiveMigration()
+                    //.addMigrations(MIGRATION_1_2)
+                    //.addCallback(DbCallback())
                     .build()
             }
         }
@@ -29,3 +32,13 @@ object Db {
         INSTANCE = null
     }
 }
+
+//class DbCallback : RoomDatabase.Callback() {
+//    override fun onCreate(db: SupportSQLiteDatabase) {
+//        Log.d("asd123", "DbCallback onCreate")
+//    }
+//
+//    override fun onOpen(db: SupportSQLiteDatabase) {
+//        Log.d("asd123", "DbCallback onOpen")
+//    }
+//}
