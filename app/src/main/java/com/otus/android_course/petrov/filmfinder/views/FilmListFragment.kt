@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.otus.android_course.petrov.filmfinder.App
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.repository.FilmRepository
@@ -80,7 +81,7 @@ class FilmListFragment : Fragment() {
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if ((recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == filmList.size - 1) {
-                        swipeRefreshLayout.isRefreshing = viewModel.onLastVisibleItemPosition()
+                        swipeRefreshLayout.isRefreshing = viewModel.getFilms()
                     }
                 }
             })
@@ -118,7 +119,10 @@ class FilmListFragment : Fragment() {
         }
 
         // Получение списка фильмов при старте приложения
-        swipeRefreshLayout.isRefreshing = viewModel.onAppStart()
+        if (App.appStart) {
+            swipeRefreshLayout.isRefreshing = viewModel.getFilms()
+            App.appStart = false
+        }
     }
 
     companion object {

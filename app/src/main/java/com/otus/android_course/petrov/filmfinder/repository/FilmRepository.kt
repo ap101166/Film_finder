@@ -1,12 +1,12 @@
 package com.otus.android_course.petrov.filmfinder.repository
 
 import com.otus.android_course.petrov.filmfinder.App
-import com.otus.android_course.petrov.filmfinder.data.FilmItem
-import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteList
+import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteFilmList
 import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.interfaces.IGetFilmsCallback
 import com.otus.android_course.petrov.filmfinder.repository.local_db.Db
-import com.otus.android_course.petrov.filmfinder.repository.local_db.FavoriteFilms
+import com.otus.android_course.petrov.filmfinder.repository.local_db.FavoriteFilm
+import com.otus.android_course.petrov.filmfinder.repository.local_db.Film
 import com.otus.android_course.petrov.filmfinder.repository.web.FilmModel
 import com.otus.android_course.petrov.filmfinder.repository.web.WebService
 import retrofit2.Call
@@ -52,13 +52,13 @@ object FilmRepository {
                     call: Call<List<FilmModel>>,
                     response: Response<List<FilmModel>>
                 ) {
-                    val tmpList = ArrayList<FilmItem>()
+                    val tmpList = ArrayList<Film>()
                     if (response.isSuccessful) {
                         if (response.body()!!.isNotEmpty()) {
                             response.body()?.forEach { resp ->
                                 tmpList.add(
-                                    FilmItem(
-                                        filmId = resp.id,
+                                    Film(
+                                        id = resp.id,
                                         caption = resp.title,
                                         description = resp.description,
                                         pictureUrl = resp.image
@@ -68,23 +68,28 @@ object FilmRepository {
                             // Проверка, имеется ли загружаемый фильм в списке избранного
                             for (film in tmpList) {
                                 var isFav = false
-                                for (favItem in favoriteList) {
+                                for (favItem in favoriteFilmList) {
                                     // Проверка на вхождение в список избранного
-                                    if (favItem.id == film.filmId) {
+                                    if (favItem.id == film.id) {
                                         isFav = true
                                         // Обновление элемента списка избранного если он изменился
                                         if ((favItem.caption != film.caption) || (favItem.pictureUrl != film.pictureUrl)) {
                                             favItem.caption = film.caption
                                             favItem.pictureUrl = film.pictureUrl
-                                            //          Db.getInstance(App.appInstance)?.getFilmDao()?.update(favItem)
+                                            Executors.newSingleThreadScheduledExecutor().execute {
+                                                Db.getInstance(App.appInstance)!!.filmDao().updateFavorite(favItem)
+                                            }
                                         }
                                         break
                                     }
                                 }
                                 film.isFavorite = isFav
                             }
-                            // Добавление загруженной страницы в список фильмов
+                            // Добавление загруженной страницы в список фильмов и в локальную БД
                             filmList.addAll(tmpList)
+                            Executors.newSingleThreadScheduledExecutor().execute {
+                                Db.getInstance(App.appInstance)!!.filmDao().insertFilmList(tmpList as List<Film>)
+                            }
                             //
                             callback.onSuccess(FILM_LIST_CHANGED)
                             curPageNumber++
@@ -104,26 +109,44 @@ object FilmRepository {
     }
 
     /**
+     * \brief Чтение списка избранного из БД
+     */
+    fun readFavorites() {
+        //
+        Executors.newSingleThreadScheduledExecutor().execute {
+            Db.getInstance(App.appInstance)!!.filmDao().getFavorites().let {
+                favoriteFilmList.clear()
+                favoriteFilmList.addAll(it)
+            }
+
+            Db.getInstance(App.appInstance)!!.filmDao().getFilmList().let {
+                filmList.clear()
+                filmList.addAll(it)
+            }
+
+        }
+    }
+    /**
      * \brief Метод для добавления/удаления в список избранного
      */
-    fun addOrRemoveFavorites(filmItem: FilmItem) {
+    fun addOrRemoveFavorites(filmItem: Film) {
         //
         filmItem.isFavorite = !filmItem.isFavorite
         //
         if (filmItem.isFavorite) {
             // Добавление в список избранного
-            val tmpFav = FavoriteFilms(filmItem.filmId, filmItem.caption, filmItem.pictureUrl)
-            favoriteList.add(tmpFav)
+            val tmpFav = FavoriteFilm(filmItem.id, filmItem.caption, filmItem.pictureUrl)
+            favoriteFilmList.add(tmpFav)
             Executors.newSingleThreadScheduledExecutor().execute {
-                Db.getInstance(App.appInstance)!!.filmDao().insert(tmpFav)
+                Db.getInstance(App.appInstance)!!.filmDao().insertFavorite(tmpFav)
             }
         } else {
             // Удаление из списка избранного
-            for (favItem in favoriteList) {
-                if (favItem.id == filmItem.filmId) {
-                    favoriteList.remove(favItem)
+            for (favItem in favoriteFilmList) {
+                if (favItem.id == filmItem.id) {
+                    favoriteFilmList.remove(favItem)
                     Executors.newSingleThreadScheduledExecutor().execute {
-                        Db.getInstance(App.appInstance)!!.filmDao().delete(favItem)
+                        Db.getInstance(App.appInstance)!!.filmDao().deleteFavorite(favItem)
                     }
                     break
                 }

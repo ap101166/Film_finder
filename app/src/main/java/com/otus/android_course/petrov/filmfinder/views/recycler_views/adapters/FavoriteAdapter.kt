@@ -4,12 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.R
-import com.otus.android_course.petrov.filmfinder.repository.local_db.FavoriteFilms
+import com.otus.android_course.petrov.filmfinder.repository.local_db.FavoriteFilm
 import com.otus.android_course.petrov.filmfinder.views.recycler_views.view_holders.FavoriteViewHolder
 
 class FavoriteAdapter(
     private val inflater: LayoutInflater,
-    private val items: List<FavoriteFilms>
+    private val items: List<FavoriteFilm>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     /**

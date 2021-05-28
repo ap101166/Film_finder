@@ -4,13 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.R
-import com.otus.android_course.petrov.filmfinder.data.FilmItem
+import com.otus.android_course.petrov.filmfinder.repository.local_db.Film
 import com.otus.android_course.petrov.filmfinder.views.FilmListFragment
 import com.otus.android_course.petrov.filmfinder.views.recycler_views.view_holders.FilmViewHolder
 
 class FilmAdapter(
     private val inflater: LayoutInflater,
-    private val items : ArrayList<FilmItem>?,
+    private val items : ArrayList<Film>?,
     private val listeners: FilmListFragment.IFilmListClickListeners?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

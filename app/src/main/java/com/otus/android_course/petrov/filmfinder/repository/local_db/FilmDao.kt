@@ -6,19 +6,25 @@ import androidx.room.*
 interface IFilmDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(favFilm: FavoriteFilms?)
+    fun insertFavorite(favFilm: FavoriteFilm?)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertFilmList(films: List<Film>?)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun update(favFilm: FavoriteFilms?)
+    fun updateFavorite(favFilm: FavoriteFilm?)
 
     @Delete
-    fun delete(favFilm: FavoriteFilms?)
+    fun deleteFavorite(favFilm: FavoriteFilm?)
 
-    @Query("SELECT * FROM FavoriteFilms")
-    fun getAll(): List<FavoriteFilms>
+    @Query("SELECT * FROM FavoriteFilm")
+    fun getFavorites(): List<FavoriteFilm>
 
-    @Query("SELECT * FROM FavoriteFilms WHERE id = :id")
-    fun getById(id: Long): FavoriteFilms?
+    @Query("SELECT * FROM Film")
+    fun getFilmList(): List<Film>
+
+//    @Query("SELECT * FROM FavoriteFilm WHERE id = :id")
+//    fun getById(id: Long): FavoriteFilm?
 
 //    @Query("SELECT * FROM Publisher WHERE name LIKE :search ")
 //    fun findPublishersWithName(search: String?): List<Publisher?>?
@@ -33,11 +39,11 @@ abstract class FilmDao : IFilmDao {
 
     @Transaction
     open fun insertAndDeleteInTransaction(
-        newPublisher: FavoriteFilms?,       // todo
-        oldPublisher: FavoriteFilms?        //
+        newPublisher: FavoriteFilm?,       // todo
+        oldPublisher: FavoriteFilm?        //
     ) { // Anything inside this method runs in a single transaction.
-        insert(newPublisher)
-        delete(oldPublisher)
+        insertFavorite(newPublisher)
+        deleteFavorite(oldPublisher)
     }
 
 }

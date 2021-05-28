@@ -6,14 +6,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.otus.android_course.petrov.filmfinder.R
-import com.otus.android_course.petrov.filmfinder.data.FilmItem
+import com.otus.android_course.petrov.filmfinder.repository.local_db.Film
 
 class FilmViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val caption: TextView = itemView.findViewById(R.id.textViewCaption)
     private val image: ImageView = itemView.findViewById(R.id.imageViewFilm)
     val favoriteImage: ImageView = itemView.findViewById(R.id.imageFavorite)
 
-    fun bind(item: FilmItem) {
+    fun bind(item: Film) {
         caption.text = item.caption
         favoriteImage.setImageResource(
             if (item.isFavorite)

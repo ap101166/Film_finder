@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.R
-import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteList
+import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteFilmList
 import com.otus.android_course.petrov.filmfinder.views.recycler_views.adapters.FavoriteAdapter
 
 class FavoritesFragment : Fragment() {
@@ -39,7 +39,7 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val recyclerViewFavor = view.findViewById<RecyclerView>(R.id.recyclerViewFavorites)
         recyclerViewFavor.apply {
-            adapter = FavoriteAdapter(LayoutInflater.from(activity), favoriteList)
+            adapter = FavoriteAdapter(LayoutInflater.from(activity), favoriteFilmList)
             addItemDecoration(
                 DividerItemDecoration(
                     activity,

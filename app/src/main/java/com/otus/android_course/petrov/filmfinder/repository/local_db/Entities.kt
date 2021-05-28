@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class AllFilms(
+data class Film(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val caption: String?,
@@ -14,7 +14,7 @@ data class AllFilms(
 )
 
 @Entity
-data class FavoriteFilms(
+data class FavoriteFilm(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     var caption: String?,

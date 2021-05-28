@@ -3,15 +3,14 @@ package com.otus.android_course.petrov.filmfinder.view_models
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
-import com.otus.android_course.petrov.filmfinder.data.FilmItem
 import com.otus.android_course.petrov.filmfinder.interfaces.IGetFilmsCallback
 import com.otus.android_course.petrov.filmfinder.repository.FilmRepository
+import com.otus.android_course.petrov.filmfinder.repository.local_db.Film
 
 class MainViewModel(private val param: Int) : ViewModel() {
 
     // Разрешение посылки запроса в сеть (для корректной работы onScroll в FilmListFragment:RecyclerView)
-    private var netRequestEnabled = false
+    private var netRequestEnabled = true
 
     // LiveData на обновление и на ошибку загрузки списка фильмов
     private val filmListChangeMutLiveData = MutableLiveData<Int>()
@@ -28,7 +27,7 @@ class MainViewModel(private val param: Int) : ViewModel() {
     /**
      * \brief Добавление/удаление в список избранного
      */
-    fun favoriteSignClick(filmItem: FilmItem) {
+    fun favoriteSignClick(filmItem: Film) {
         //
         FilmRepository.addOrRemoveFavorites(filmItem)
         filmListChangeMutLiveData.postValue(FilmRepository.FILM_LIST_CHANGED)
@@ -46,7 +45,6 @@ class MainViewModel(private val param: Int) : ViewModel() {
                 // Очередная страница списка получена, резрешено отправлять запрос не следующую
                 netRequestEnabled = true
             }
-
             //
             override fun onError(error: Int) {
                 errorMutLiveData.postValue(error)
@@ -57,28 +55,18 @@ class MainViewModel(private val param: Int) : ViewModel() {
     }
 
     /**
-     * \brief Реакция на последнюю позицию в списке фильмов - подгрузка следующей страницы
-     */
-    fun onLastVisibleItemPosition(): Boolean {
-        return if (netRequestEnabled) {
-            getFilmList(false)
-            true
-        } else false
-    }
-
-    /**
-     * \brief Реакция на swipe - обновление списка фильмов
-     */
+    * \brief Реакция на swipe - обновление списка фильмов
+    */
     fun onSwipeRefresh() {
         getFilmList(true)
     }
 
     /**
-     * \brief Получение списка фильмов при старте приложения
+     * \brief Получение страницы списка фильмов
      */
-    fun onAppStart(): Boolean {
-        return if (filmList.isEmpty()) {
-            getFilmList(true)
+    fun getFilms(): Boolean {
+        return if (netRequestEnabled) {
+            getFilmList(false)
             true
         } else false
     }

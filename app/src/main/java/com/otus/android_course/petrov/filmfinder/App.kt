@@ -1,11 +1,9 @@
 package com.otus.android_course.petrov.filmfinder
 
 import android.app.Application
-import android.util.Log
-import com.otus.android_course.petrov.filmfinder.data.FilmItem
-import com.otus.android_course.petrov.filmfinder.repository.local_db.Db
-import com.otus.android_course.petrov.filmfinder.repository.local_db.FavoriteFilms
-import java.util.concurrent.Executors
+import com.otus.android_course.petrov.filmfinder.repository.FilmRepository
+import com.otus.android_course.petrov.filmfinder.repository.local_db.FavoriteFilm
+import com.otus.android_course.petrov.filmfinder.repository.local_db.Film
 
 class App : Application() {
     //
@@ -13,9 +11,7 @@ class App : Application() {
         super.onCreate()
         appInstance = this
         // Чтение списка избранного из БД при старте приложения
-        Executors.newSingleThreadScheduledExecutor().execute {
-            Db.getInstance(this)!!.filmDao().getAll().let { favoriteList.addAll(it) }
-        }
+        FilmRepository.readFavorites()
     }
 
     companion object {
@@ -25,10 +21,13 @@ class App : Application() {
             private set
 
         // Список любимых фильмов
-        val favoriteList = ArrayList<FavoriteFilms>()
+        val favoriteFilmList = ArrayList<FavoriteFilm>()
 
         // Список всех фильмов
-        val filmList = ArrayList<FilmItem>()
+        val filmList = ArrayList<Film>()
+
+        // Признак старта приложения
+        var appStart = true
     }
 }
 
