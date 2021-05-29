@@ -17,10 +17,10 @@ interface IFilmDao {
     @Delete
     fun deleteFavorite(favFilm: FavoriteFilm?)
 
-    @Query("SELECT * FROM FavoriteFilm")
+    @Query("SELECT * FROM fav_films")
     fun getFavorites(): List<FavoriteFilm>
 
-    @Query("SELECT * FROM Film")
+    @Query("SELECT * FROM all_films")
     fun getFilmList(): List<Film>
 
 //    @Query("SELECT * FROM FavoriteFilm WHERE id = :id")

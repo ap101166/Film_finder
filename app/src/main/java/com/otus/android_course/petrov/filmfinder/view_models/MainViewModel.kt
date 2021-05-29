@@ -3,11 +3,16 @@ package com.otus.android_course.petrov.filmfinder.view_models
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.otus.android_course.petrov.filmfinder.App
 import com.otus.android_course.petrov.filmfinder.interfaces.IGetFilmsCallback
 import com.otus.android_course.petrov.filmfinder.repository.FilmRepository
 import com.otus.android_course.petrov.filmfinder.repository.local_db.Film
+import kotlinx.android.synthetic.main.film_list_fragment.*
 
 class MainViewModel(private val param: Int) : ViewModel() {
+
+    // Признак первого запуска приложения
+    var appStart = true
 
     // Разрешение посылки запроса в сеть (для корректной работы onScroll в FilmListFragment:RecyclerView)
     private var netRequestEnabled = true
@@ -45,6 +50,7 @@ class MainViewModel(private val param: Int) : ViewModel() {
                 // Очередная страница списка получена, резрешено отправлять запрос не следующую
                 netRequestEnabled = true
             }
+
             //
             override fun onError(error: Int) {
                 errorMutLiveData.postValue(error)
@@ -55,8 +61,8 @@ class MainViewModel(private val param: Int) : ViewModel() {
     }
 
     /**
-    * \brief Реакция на swipe - обновление списка фильмов
-    */
+     * \brief Реакция на swipe - обновление списка фильмов
+     */
     fun onSwipeRefresh() {
         getFilmList(true)
     }
@@ -70,4 +76,17 @@ class MainViewModel(private val param: Int) : ViewModel() {
             true
         } else false
     }
+
+    /**
+     * \brief Получение страницы списка фильмов при старте приложения
+     */
+    fun getFilmsOnStart(): Boolean {
+        return if (appStart) {
+            getFilmList(true)
+            appStart = false
+            true
+        } else false
+    }
+
+
 }

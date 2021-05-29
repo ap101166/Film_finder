@@ -94,10 +94,10 @@ object FilmRepository {
                             callback.onSuccess(FILM_LIST_CHANGED)
                             curPageNumber++
                         } else {
-                            callback.onError(EMPTY_RESPONSE)
+                            callback.onSuccess(EMPTY_RESPONSE)
                         }
                     } else {
-                        callback.onError(LOAD_ERROR_1)
+                        callback.onError(response.code())
                     }
                 }
 
@@ -119,10 +119,10 @@ object FilmRepository {
                 favoriteFilmList.addAll(it)
             }
 
-            Db.getInstance(App.appInstance)!!.filmDao().getFilmList().let {
-                filmList.clear()
-                filmList.addAll(it)
-            }
+//            Db.getInstance(App.appInstance)!!.filmDao().getFilmList().let {
+//                filmList.clear()
+//                filmList.addAll(it)
+//            }
 
         }
     }

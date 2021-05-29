@@ -25,9 +25,6 @@ class App : Application() {
 
         // Список всех фильмов
         val filmList = ArrayList<Film>()
-
-        // Признак старта приложения
-        var appStart = true
     }
 }
 

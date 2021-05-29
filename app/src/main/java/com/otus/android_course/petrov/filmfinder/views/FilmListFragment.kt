@@ -26,6 +26,7 @@ class FilmListFragment : Fragment() {
     interface IFilmListClickListeners {
         // Метод для вывода описания фильма
         fun onFilmItemClick(index: Int)
+
         // Метод для удаления/добавления в список избранного
         fun onFavoriteSignClick(index: Int)
     }
@@ -34,7 +35,7 @@ class FilmListFragment : Fragment() {
     private lateinit var mListeners: IFilmListClickListeners
 
     private val viewModel by lazy {
-        ViewModelProvider(requireActivity(),MainFactory(11)).get(MainViewModel::class.java)
+        ViewModelProvider(requireActivity(), MainFactory(11)).get(MainViewModel::class.java)
     }
 
     /**
@@ -81,7 +82,9 @@ class FilmListFragment : Fragment() {
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if ((recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == filmList.size - 1) {
-                        swipeRefreshLayout.isRefreshing = viewModel.getFilms()
+                        if (viewModel.getFilms()) {
+                            swipeRefreshLayout.isRefreshing = true
+                        }
                     }
                 }
             })
@@ -99,6 +102,7 @@ class FilmListFragment : Fragment() {
         // Listener на swipe - обновление списка фильмов
         swipeRefreshLayout.setOnRefreshListener {
             viewModel.onSwipeRefresh()
+            swipeRefreshLayout.isRefreshing = true
         }
 
         // Observer на обновление списка фильмов
@@ -119,9 +123,8 @@ class FilmListFragment : Fragment() {
         }
 
         // Получение списка фильмов при старте приложения
-        if (App.appStart) {
-            swipeRefreshLayout.isRefreshing = viewModel.getFilms()
-            App.appStart = false
+        if (viewModel.getFilmsOnStart()) {
+            swipeRefreshLayout.isRefreshing = true
         }
     }
 

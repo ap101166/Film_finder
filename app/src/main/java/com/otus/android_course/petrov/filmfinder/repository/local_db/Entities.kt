@@ -3,9 +3,9 @@ package com.otus.android_course.petrov.filmfinder.repository.local_db
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "all_films")
 data class Film(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     val id: Int = 0,
     val caption: String?,
     val description: String?,
@@ -13,9 +13,9 @@ data class Film(
     var isFavorite: Boolean = false
 )
 
-@Entity
+@Entity(tableName = "fav_films")
 data class FavoriteFilm(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     val id: Int = 0,
     var caption: String?,
     var pictureUrl: String?
