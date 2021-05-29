@@ -38,9 +38,9 @@ interface IFilmDao {
 abstract class FilmDao : IFilmDao {
 
     @Transaction
-    open fun insertAndDeleteInTransaction(
-        newPublisher: FavoriteFilm?,       // todo
-        oldPublisher: FavoriteFilm?        //
+    open fun insertAndDeleteInTransaction( // todo ????
+        newPublisher: FavoriteFilm?,
+        oldPublisher: FavoriteFilm?
     ) { // Anything inside this method runs in a single transaction.
         insertFavorite(newPublisher)
         deleteFavorite(oldPublisher)

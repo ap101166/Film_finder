@@ -6,7 +6,8 @@
     <string name="filmDeleted">Фильм удален</string>
     <string name="filmAdded">Фильм добавлен</string>
     <string name="strCancel">Отмена</string>
-    <string name="str_load_error">Ошибка загрузки!</string>
+    <string name="str_load_error1">Нет соединения с сервером!</string>
+    <string name="str_load_error2">Ошибка загрузки</string>
     <string name="strExitApp">Выйти из приложения?</string>
     <string name="strFinishWork">Завершение работы</string>
     <string name="strExit">Выход</string>

@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.otus.android_course.petrov.filmfinder.App
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.repository.FilmRepository
@@ -113,12 +112,12 @@ class FilmListFragment : Fragment() {
 
         // Observer на ошибку при загрузке списка фильмов
         viewModel.errorLiveData.observe(requireActivity()) { error ->
-            if (error == FilmRepository.EMPTY_RESPONSE) {
-                // Пришел пустой ответ - нормальная ситуация (размер списка кратен размеру страницы)
+            val strErr = if (error == FilmRepository.HARD_LOAD_ERROR) {
+                getString(R.string.str_load_error1)
             } else {
-                // Ошибка при загрузке списка
-                Toast.makeText(requireActivity(), getString(R.string.str_load_error) + " $error", Toast.LENGTH_LONG).show()
+                getString(R.string.str_load_error2) + " $error"
             }
+            Toast.makeText(requireActivity(), strErr, Toast.LENGTH_LONG).show()
             swipeRefreshLayout.isRefreshing = false
         }
 

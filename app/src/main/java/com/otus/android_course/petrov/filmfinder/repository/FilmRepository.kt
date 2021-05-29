@@ -20,25 +20,14 @@ object FilmRepository {
     private var curPageNumber = 1
 
     //
-    const val FILM_LIST_CHANGED = 0
-    const val LOAD_ERROR_1 = 1
-    const val LOAD_ERROR_2 = 2
-    const val EMPTY_RESPONSE = 3
+    const val FILM_LIST_CHANGED = 1
+    const val EMPTY_RESPONSE    = 2  // Пришел пустой ответ - нормальная ситуация (размер списка кратен размеру страницы)
+    const val HARD_LOAD_ERROR        = -1
 
     /**
-     * \brief Метод для получения списка фильмов с сервера
+     * \brief Метод для получения списка фильмов с сервера или из БД
      */
     fun getFilms(doReload: Boolean, callback: IGetFilmsCallback) {
-
-        //
-        getFilmsFromWeb(doReload, callback)
-
-    }
-
-    /**
-     * \brief Метод для получения списка фильмов с сервера
-     */
-    private fun getFilmsFromWeb(doReload: Boolean, callback: IGetFilmsCallback) {
         // Перезагрузка списка фильмов
         if (doReload) {
             filmList.clear()
@@ -97,13 +86,15 @@ object FilmRepository {
                             callback.onSuccess(EMPTY_RESPONSE)
                         }
                     } else {
+                        loadFilmsFromDB()
                         callback.onError(response.code())
                     }
                 }
 
                 // Callback на ошибку
                 override fun onFailure(call: Call<List<FilmModel>>, t: Throwable) {
-                    callback.onError(LOAD_ERROR_2)
+                    loadFilmsFromDB()
+                    callback.onError(HARD_LOAD_ERROR)
                 }
             })
     }
@@ -118,14 +109,22 @@ object FilmRepository {
                 favoriteFilmList.clear()
                 favoriteFilmList.addAll(it)
             }
-
-//            Db.getInstance(App.appInstance)!!.filmDao().getFilmList().let {
-//                filmList.clear()
-//                filmList.addAll(it)
-//            }
-
         }
     }
+
+    /**
+     * \brief Чтение списка фильмов из БД
+     */
+    private fun loadFilmsFromDB() {
+        //
+        Executors.newSingleThreadScheduledExecutor().execute {
+            Db.getInstance(App.appInstance)!!.filmDao().getFilmList().let {
+                filmList.clear()
+                filmList.addAll(it)
+            }
+        }
+    }
+
     /**
      * \brief Метод для добавления/удаления в список избранного
      */
