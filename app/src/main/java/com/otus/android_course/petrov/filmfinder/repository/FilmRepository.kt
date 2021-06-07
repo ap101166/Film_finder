@@ -21,16 +21,15 @@ object FilmRepository {
 
     //
     const val FILM_LIST_CHANGED = 1
-    const val EMPTY_RESPONSE    = 2  // Пришел пустой ответ - нормальная ситуация (размер списка кратен размеру страницы)
-    const val HARD_LOAD_ERROR        = -1
+    const val EMPTY_RESPONSE = 2
+    const val HARD_LOAD_ERROR = -1
 
     /**
      * \brief Метод для получения списка фильмов с сервера или из БД
      */
     fun getFilms(doReload: Boolean, callback: IGetFilmsCallback) {
-        // Перезагрузка списка фильмов
+        // Перезагрузка списка фильмов с первой страницы
         if (doReload) {
-            filmList.clear()
             curPageNumber = 1
         }
         // Загрузка текущей страницы
@@ -41,9 +40,9 @@ object FilmRepository {
                     call: Call<List<FilmModel>>,
                     response: Response<List<FilmModel>>
                 ) {
-                    val tmpList = ArrayList<Film>()
                     if (response.isSuccessful) {
                         if (response.body()!!.isNotEmpty()) {
+                            val tmpList = ArrayList<Film>()
                             response.body()?.forEach { resp ->
                                 tmpList.add(
                                     Film(
@@ -54,74 +53,77 @@ object FilmRepository {
                                     )
                                 )
                             }
-                            // Проверка, имеется ли загружаемый фильм в списке избранного
-                            for (film in tmpList) {
-                                var isFav = false
-                                for (favItem in favoriteFilmList) {
-                                    // Проверка на вхождение в список избранного
-                                    if (favItem.id == film.id) {
-                                        isFav = true
-                                        // Обновление элемента списка избранного если он изменился
-                                        if ((favItem.caption != film.caption) || (favItem.pictureUrl != film.pictureUrl)) {
-                                            favItem.caption = film.caption
-                                            favItem.pictureUrl = film.pictureUrl
-                                            Executors.newSingleThreadScheduledExecutor().execute {
-                                                Db.getInstance(App.appInstance)!!.filmDao().updateFavorite(favItem)
-                                            }
-                                        }
-                                        break
-                                    }
-                                }
-                                film.isFavorite = isFav
-                            }
+                            // Установка признака "избранное" в загружаемых фильмах если они есть в списке избранного
+                            checkAndSetFavorites(tmpList)
                             // Добавление загруженной страницы в список фильмов и в локальную БД
+                            if (curPageNumber == 1) filmList.clear() // Если это первая страница, очистка списка фильмов
                             filmList.addAll(tmpList)
                             Executors.newSingleThreadScheduledExecutor().execute {
                                 Db.getInstance(App.appInstance)!!.filmDao().insertFilmList(tmpList as List<Film>)
                             }
-                            //
+                            // Очередная страница успешно загружена
                             callback.onSuccess(FILM_LIST_CHANGED)
                             curPageNumber++
                         } else {
+                            // Пришел пустой ответ - нормальная ситуация (размер списка кратен размеру страницы)
                             callback.onSuccess(EMPTY_RESPONSE)
                         }
                     } else {
-                        loadFilmsFromDB()
                         callback.onError(response.code())
                     }
                 }
 
                 // Callback на ошибку
                 override fun onFailure(call: Call<List<FilmModel>>, t: Throwable) {
-                    loadFilmsFromDB()
                     callback.onError(HARD_LOAD_ERROR)
                 }
             })
     }
 
     /**
-     * \brief Чтение списка избранного из БД
+     * \brief Установка признака "избранное" в загружаемых фильмах если они есть в списке избранного
      */
-    fun readFavorites() {
+    private fun checkAndSetFavorites(loadedFilms: List<Film>) {
         //
-        Executors.newSingleThreadScheduledExecutor().execute {
-            Db.getInstance(App.appInstance)!!.filmDao().getFavorites().let {
-                favoriteFilmList.clear()
-                favoriteFilmList.addAll(it)
+        for (film in loadedFilms) {
+            var isFav = false
+            for (favFilm in favoriteFilmList) {
+                // Проверка на вхождение в список избранного
+                if (favFilm.id == film.id) {
+                    isFav = true
+                    // Обновление элемента списка избранного если элемент изменился
+                    if ((favFilm.caption != film.caption) || (favFilm.pictureUrl != film.pictureUrl)) {
+                        favFilm.caption = film.caption
+                        favFilm.pictureUrl = film.pictureUrl
+                        Executors.newSingleThreadScheduledExecutor().execute {
+                            Db.getInstance(App.appInstance)!!.filmDao().updateFavorite(favFilm)
+                        }
+                    }
+                    break
+                }
             }
+            film.isFavorite = isFav
         }
     }
 
     /**
-     * \brief Чтение списка фильмов из БД
+     * \brief Чтение списков фильмов из локальной БД
      */
-    private fun loadFilmsFromDB() {
+    fun loadFilmsFromDb() {
         //
         Executors.newSingleThreadScheduledExecutor().execute {
+            // Чтение списка фильмов из БД
             Db.getInstance(App.appInstance)!!.filmDao().getFilmList().let {
                 filmList.clear()
                 filmList.addAll(it)
             }
+            // Чтение списка избранного из БД
+            Db.getInstance(App.appInstance)!!.filmDao().getFavorites().let {
+                favoriteFilmList.clear()
+                favoriteFilmList.addAll(it)
+            }
+            //
+            checkAndSetFavorites(filmList)
         }
     }
 

@@ -10,8 +10,8 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         appInstance = this
-        // Чтение списка избранного из БД при старте приложения
-        FilmRepository.readFavorites()
+        // Чтение списков фильмов из локальной БД при старте приложения
+        FilmRepository.loadFilmsFromDb()
     }
 
     companion object {
@@ -31,4 +31,3 @@ class App : Application() {
 //todo
 // Разобраться как создаются фрагменты
 // Подумать где хранить список фильмов и фаворитов (ViewModel или глобально)
-// Как загружать список фильмов при старте

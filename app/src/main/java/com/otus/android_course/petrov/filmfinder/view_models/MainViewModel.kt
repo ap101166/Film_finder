@@ -3,28 +3,24 @@ package com.otus.android_course.petrov.filmfinder.view_models
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.otus.android_course.petrov.filmfinder.App
 import com.otus.android_course.petrov.filmfinder.interfaces.IGetFilmsCallback
 import com.otus.android_course.petrov.filmfinder.repository.FilmRepository
 import com.otus.android_course.petrov.filmfinder.repository.local_db.Film
-import kotlinx.android.synthetic.main.film_list_fragment.*
 
 class MainViewModel(private val param: Int) : ViewModel() {
 
     // Признак первого запуска приложения
-    var appStart = true
+    private var appStart = true
 
     // Разрешение посылки запроса в сеть (для корректной работы onScroll в FilmListFragment:RecyclerView)
     private var netRequestEnabled = true
 
-    // LiveData на обновление и на ошибку загрузки списка фильмов
+    // LiveData на события обновления и ошибки загрузки списка фильмов
     private val filmListChangeMutLiveData = MutableLiveData<Int>()
     private val errorMutLiveData = MutableLiveData<Int>()
-
     //
     val filmListHasChangedLiveData: LiveData<Int>
         get() = filmListChangeMutLiveData
-
     //
     val errorLiveData: LiveData<Int>
         get() = errorMutLiveData
