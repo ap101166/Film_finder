@@ -10,9 +10,19 @@ import com.otus.android_course.petrov.filmfinder.views.recycler_views.view_holde
 
 class FilmAdapter(
     private val inflater: LayoutInflater,
-    private val items : ArrayList<Film>?,
     private val listeners: FilmListFragment.IFilmListClickListeners?
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    //
+    private val items = ArrayList<Film>()
+
+    /**
+     * \brief Обновление локального списка фильмов
+     */
+    fun updateFilmList(filmLst: List<Film>) {
+        items.clear()
+        items.addAll(filmLst)
+    }
 
     /**
      * \brief Создание объекта ViewHolder
@@ -24,17 +34,17 @@ class FilmAdapter(
     /**
      * \brief Получение кол-ва элементов в списке
      */
-    override fun getItemCount() = items!!.size
+    override fun getItemCount() = items.size
 
     /**
      * \brief Наполнение объекта ViewHolder данными
      */
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = items!![position]
+        val item = items[position]
         if (holder is FilmViewHolder) {
             holder.bind(item)
             // Установка обработчиков нажатия на весь элемент и на Избранное
-            holder.itemView.setOnClickListener { listeners!!.onFilmItemClick(position) }
+            holder.itemView.setOnClickListener { listeners!!.onFilmItemClick(items[position]) }
             holder.favoriteImage.setOnClickListener { listeners!!.onFavoriteSignClick(position) }
         }
     }

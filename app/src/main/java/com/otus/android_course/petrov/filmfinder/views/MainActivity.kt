@@ -5,16 +5,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
-import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.R
+import com.otus.android_course.petrov.filmfinder.repository.local_db.Film
 import com.otus.android_course.petrov.filmfinder.view_models.MainFactory
-import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
+import com.otus.android_course.petrov.filmfinder.view_models.FilmsViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), FilmListFragment.IFilmListClickListeners, ExitDialog.INoticeDialogListener {
 
     private val viewModel by lazy {
-        ViewModelProvider(this, MainFactory(23)).get(MainViewModel::class.java)
+        ViewModelProvider(this, MainFactory(23)).get(FilmsViewModel::class.java)
     }
 
     /**
@@ -58,15 +58,11 @@ class MainActivity : AppCompatActivity(), FilmListFragment.IFilmListClickListene
     /**
      * \brief Метод интерфейса IFilmListClickListeners для вывода описания фильма
      */
-    override fun onFilmItemClick(index: Int) {
+    override fun onFilmItemClick(film: Film) {
         supportFragmentManager
             .beginTransaction()
             .setReorderingAllowed(true)
-            .replace(
-                R.id.fragmentContainer,
-                FilmDetailsFragment.newInstance(index),
-                FilmDetailsFragment.TAG
-            )
+            .replace(R.id.fragmentContainer, FilmDetailsFragment(film), FilmDetailsFragment.TAG)
             .addToBackStack(null)
             .commit()
     }
@@ -75,19 +71,17 @@ class MainActivity : AppCompatActivity(), FilmListFragment.IFilmListClickListene
      * \brief Метод интерфейса IFilmListClickListeners для удаления/добавления в список избранного
      */
     override fun onFavoriteSignClick(index: Int) {
-        //
-        viewModel.favoriteSignClick(filmList[index])
-        //
-        val str = getString(
-            if (filmList[index].isFavorite) {
+        val isFavor = viewModel.favoriteSignClick(index)
+        val strAddDel = getString(
+            if (isFavor) {
                 R.string.filmAdded
             } else {
                 R.string.filmDeleted
             }
         )
-        Snackbar.make(findViewById(R.id.fragmentContainer), str, Snackbar.LENGTH_LONG)
+        Snackbar.make(findViewById(R.id.fragmentContainer), strAddDel, Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.strCancel)) {
-                viewModel.favoriteSignClick(filmList[index])
+                viewModel.favoriteSignClick(index)
             }
             .show()
     }

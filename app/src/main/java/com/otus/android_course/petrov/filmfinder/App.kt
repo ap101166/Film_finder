@@ -15,19 +15,7 @@ class App : Application() {
     }
 
     companion object {
-
-        //
         lateinit var appInstance: Application
             private set
-
-        // Список любимых фильмов
-        val favoriteFilmList = ArrayList<FavoriteFilm>()
-
-        // Список всех фильмов
-        val filmList = ArrayList<Film>()
     }
 }
-
-//todo
-// Разобраться как создаются фрагменты
-// Подумать где хранить список фильмов и фаворитов (ViewModel или глобально)

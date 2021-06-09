@@ -9,10 +9,10 @@ import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.R
+import com.otus.android_course.petrov.filmfinder.repository.local_db.Film
 
-class FilmDetailsFragment : Fragment() {
+class FilmDetailsFragment(private val film: Film) : Fragment() {
 
     /**
      * \brief Событие создания фрагмента
@@ -38,15 +38,14 @@ class FilmDetailsFragment : Fragment() {
      */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val filmIdx : Int = arguments?.getInt(FILM_INDEX)!!
         // Название фильма
-        view.findViewById<Toolbar>(R.id.toolbar).title = filmList[filmIdx].caption
+        view.findViewById<Toolbar>(R.id.toolbar).title = film.caption
         // Описание фильма
-        view.findViewById<TextView>(R.id.textViewDescription).text = filmList[filmIdx].description
+        view.findViewById<TextView>(R.id.textViewDescription).text = film.description
         // Картинка фильма
         val image = view.findViewById<ImageView>(R.id.imageViewFilm)
         Glide.with(image.context)
-            .load(filmList[filmIdx].pictureUrl)
+            .load(film.pictureUrl)
             .placeholder(R.drawable.ic_load_24dp)
             .error(R.drawable.ic_error_outline_red_24dp)
             .override(image.resources.getDimensionPixelSize(R.dimen.image_size))
@@ -56,15 +55,15 @@ class FilmDetailsFragment : Fragment() {
 
     companion object {
         const val TAG = "FilmDetailsFragment"
-        const val FILM_INDEX = "film_index"
+//        const val FILM_ITEM = "film_index"
 
-        /**
-         * \brief Метод создания экземпляра FilmDetailsFragment
-         */
-        fun newInstance(index: Int): FilmDetailsFragment {
-            return FilmDetailsFragment().apply {
-                arguments = Bundle().apply { putInt(FILM_INDEX, index) }
-            }
-        }
+//        /**
+//         * \brief Метод создания экземпляра FilmDetailsFragment
+//         */
+//        fun newInstance(film: Film): FilmDetailsFragment {
+//            return FilmDetailsFragment().apply {
+//                arguments = Bundle().apply { putSerializable(FILM_ITEM, film) }
+//            }
+//        }
     }
 }

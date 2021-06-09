@@ -12,11 +12,11 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.R
-import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
 import com.otus.android_course.petrov.filmfinder.repository.FilmRepository
+import com.otus.android_course.petrov.filmfinder.repository.local_db.Film
 import com.otus.android_course.petrov.filmfinder.view_models.MainFactory
 import com.otus.android_course.petrov.filmfinder.views.recycler_views.adapters.FilmAdapter
-import com.otus.android_course.petrov.filmfinder.view_models.MainViewModel
+import com.otus.android_course.petrov.filmfinder.view_models.FilmsViewModel
 import kotlinx.android.synthetic.main.film_list_fragment.*
 
 class FilmListFragment : Fragment() {
@@ -24,8 +24,7 @@ class FilmListFragment : Fragment() {
     // Интерфейс обработчиков нажатий на элемент списка фильмов
     interface IFilmListClickListeners {
         // Метод для вывода описания фильма
-        fun onFilmItemClick(index: Int)
-
+        fun onFilmItemClick(film: Film)
         // Метод для удаления/добавления в список избранного
         fun onFavoriteSignClick(index: Int)
     }
@@ -34,7 +33,7 @@ class FilmListFragment : Fragment() {
     private lateinit var mListeners: IFilmListClickListeners
 
     private val viewModel by lazy {
-        ViewModelProvider(requireActivity(), MainFactory(11)).get(MainViewModel::class.java)
+        ViewModelProvider(requireActivity(), MainFactory(11)).get(FilmsViewModel::class.java)
     }
 
     /**
@@ -76,11 +75,11 @@ class FilmListFragment : Fragment() {
 
         // Создание recyclerView
         recyclerViewFilmList.apply {
-            adapter = FilmAdapter(LayoutInflater.from(activity), filmList, mListeners)
+            adapter = FilmAdapter(LayoutInflater.from(activity), mListeners)
             // OnScroll listener для пагинации
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if ((recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == filmList.size - 1) {
+                    if ((recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition() == (adapter as FilmAdapter).itemCount - 1) {
                         if (viewModel.getFilms()) {
                             swipeRefreshLayout.isRefreshing = true
                         }
@@ -105,8 +104,9 @@ class FilmListFragment : Fragment() {
         }
 
         // Observer на обновление списка фильмов
-        viewModel.filmListHasChangedLiveData.observe(requireActivity()) {
-            recyclerViewFilmList.adapter?.notifyDataSetChanged()
+        viewModel.filmListLiveData.observe(requireActivity()) {
+            (recyclerViewFilmList.adapter as FilmAdapter).updateFilmList(it)
+            recyclerViewFilmList.adapter!!.notifyDataSetChanged()
             swipeRefreshLayout.isRefreshing = false
         }
 

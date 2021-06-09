@@ -1,9 +1,8 @@
 package com.otus.android_course.petrov.filmfinder.repository
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.otus.android_course.petrov.filmfinder.App
-import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteFilmList
-import com.otus.android_course.petrov.filmfinder.App.Companion.filmList
-import com.otus.android_course.petrov.filmfinder.interfaces.IGetFilmsCallback
 import com.otus.android_course.petrov.filmfinder.repository.local_db.Db
 import com.otus.android_course.petrov.filmfinder.repository.local_db.FavoriteFilm
 import com.otus.android_course.petrov.filmfinder.repository.local_db.Film
@@ -16,18 +15,38 @@ import java.util.concurrent.Executors
 
 object FilmRepository {
 
+    // Список фильмов
+    private val filmList = ArrayList<Film>()
+
+    // Список любимых фильмов
+    private val favoriteFilmList = ArrayList<FavoriteFilm>()
+
+    // LiveData списка фильмов
+    private val filmListMutLiveData = MutableLiveData<List<Film>>()
+    val filmListLiveData: LiveData<List<Film>>
+        get() = filmListMutLiveData
+
+    // LiveData ошибки загрузки списка фильмов
+    private val errorMutLiveData = MutableLiveData<Int>()
+    val errorLiveData: LiveData<Int>
+        get() = errorMutLiveData
+
     // Номер текущей страницы
     private var curPageNumber = 1
 
-    //
-    const val FILM_LIST_CHANGED = 1
-    const val EMPTY_RESPONSE = 2
+    // Разрешение посылки запроса в сеть (для корректной работы onScroll в FilmListFragment:RecyclerView)
+    private var netRequestEnable = true
+
+    // Ошибка связи с сервером
     const val HARD_LOAD_ERROR = -1
 
     /**
      * \brief Метод для получения списка фильмов с сервера или из БД
      */
-    fun getFilms(doReload: Boolean, callback: IGetFilmsCallback) {
+    fun getFilms(doReload: Boolean): Boolean {
+        // Блокировка повторных запросов до прихода ответа на предыдущий запрос
+        if (!netRequestEnable) return false
+        netRequestEnable = false
         // Перезагрузка списка фильмов с первой страницы
         if (doReload) {
             curPageNumber = 1
@@ -35,6 +54,7 @@ object FilmRepository {
         // Загрузка текущей страницы
         WebService.getService().getFilmPage(curPageNumber.toString())
             .enqueue(object : Callback<List<FilmModel>> {
+                //
                 // Callback на успешное выполнение запроса
                 override fun onResponse(
                     call: Call<List<FilmModel>>,
@@ -61,23 +81,29 @@ object FilmRepository {
                             Executors.newSingleThreadScheduledExecutor().execute {
                                 Db.getInstance(App.appInstance)!!.filmDao().insertFilmList(tmpList as List<Film>)
                             }
-                            // Очередная страница успешно загружена
-                            callback.onSuccess(FILM_LIST_CHANGED)
+                            // Инкремент номера страницы
                             curPageNumber++
                         } else {
-                            // Пришел пустой ответ - нормальная ситуация (размер списка кратен размеру страницы)
-                            callback.onSuccess(EMPTY_RESPONSE)
+                            // Пришел пустой ответ (список закончился) - просто обновляем filmList
                         }
+                        // Очередная страница успешно загружена, необх. обновить список фильмов
+                        filmListMutLiveData.postValue(filmList)
                     } else {
-                        callback.onError(response.code())
+                        errorMutLiveData.postValue(response.code())
                     }
+                    // Успешный ответ получен, можно отправлять следующий запрос
+                    netRequestEnable = true
                 }
-
+                //
                 // Callback на ошибку
                 override fun onFailure(call: Call<List<FilmModel>>, t: Throwable) {
-                    callback.onError(HARD_LOAD_ERROR)
+                    errorMutLiveData.postValue(HARD_LOAD_ERROR)
+                    // Неуспешный ответ получен, можно отправлять следующий запрос
+                    netRequestEnable = true
                 }
             })
+        //
+        return true
     }
 
     /**
@@ -116,6 +142,7 @@ object FilmRepository {
             Db.getInstance(App.appInstance)!!.filmDao().getFilmList().let {
                 filmList.clear()
                 filmList.addAll(it)
+                filmListMutLiveData.postValue(filmList)
             }
             // Чтение списка избранного из БД
             Db.getInstance(App.appInstance)!!.filmDao().getFavorites().let {
@@ -128,15 +155,16 @@ object FilmRepository {
     }
 
     /**
-     * \brief Метод для добавления/удаления в список избранного
+     * \brief Добавление/удаление в список избранного
      */
-    fun addOrRemoveFavorites(filmItem: Film) {
+    fun addOrRemoveFavorites(index: Int): Boolean {
         //
-        filmItem.isFavorite = !filmItem.isFavorite
+        val film = filmList[index]
+        film.isFavorite = !film.isFavorite
         //
-        if (filmItem.isFavorite) {
+        if (film.isFavorite) {
             // Добавление в список избранного
-            val tmpFav = FavoriteFilm(filmItem.id, filmItem.caption, filmItem.pictureUrl)
+            val tmpFav = FavoriteFilm(film.id, film.caption, film.pictureUrl)
             favoriteFilmList.add(tmpFav)
             Executors.newSingleThreadScheduledExecutor().execute {
                 Db.getInstance(App.appInstance)!!.filmDao().insertFavorite(tmpFav)
@@ -144,7 +172,7 @@ object FilmRepository {
         } else {
             // Удаление из списка избранного
             for (favItem in favoriteFilmList) {
-                if (favItem.id == filmItem.id) {
+                if (favItem.id == film.id) {
                     favoriteFilmList.remove(favItem)
                     Executors.newSingleThreadScheduledExecutor().execute {
                         Db.getInstance(App.appInstance)!!.filmDao().deleteFavorite(favItem)
@@ -153,5 +181,14 @@ object FilmRepository {
                 }
             }
         }
+        filmListMutLiveData.postValue(filmList)
+        return film.isFavorite
+    }
+
+    /**
+     * \brief Передать список Favorites
+     */
+    fun getFavoriteList(): List<FavoriteFilm> {
+        return favoriteFilmList
     }
 }

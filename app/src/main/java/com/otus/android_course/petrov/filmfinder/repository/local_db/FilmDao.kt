@@ -22,28 +22,4 @@ interface IFilmDao {
 
     @Query("SELECT * FROM all_films")
     fun getFilmList(): List<Film>
-
-//    @Query("SELECT * FROM FavoriteFilm WHERE id = :id")
-//    fun getById(id: Long): FavoriteFilm?
-
-//    @Query("SELECT * FROM Publisher WHERE name LIKE :search ")
-//    fun findPublishersWithName(search: String?): List<Publisher?>?
-//
-//    @Query("SELECT * FROM Publisher WHERE annual_revenue > :revenue ")
-//    fun findPublisherWithRevenueMore(revenue: Int): List<Publisher?>?
-
-}
-
-@Dao
-abstract class FilmDao : IFilmDao {
-
-    @Transaction
-    open fun insertAndDeleteInTransaction( // todo ????
-        newPublisher: FavoriteFilm?,
-        oldPublisher: FavoriteFilm?
-    ) { // Anything inside this method runs in a single transaction.
-        insertFavorite(newPublisher)
-        deleteFavorite(oldPublisher)
-    }
-
 }

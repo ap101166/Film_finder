@@ -5,13 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.R
-import com.otus.android_course.petrov.filmfinder.App.Companion.favoriteFilmList
+import com.otus.android_course.petrov.filmfinder.view_models.MainFactory
+import com.otus.android_course.petrov.filmfinder.view_models.FilmsViewModel
 import com.otus.android_course.petrov.filmfinder.views.recycler_views.adapters.FavoriteAdapter
 
 class FavoritesFragment : Fragment() {
+
+    private val viewModel by lazy {
+        ViewModelProvider(requireActivity(), MainFactory(11)).get(FilmsViewModel::class.java)
+    }
 
     /**
      * \brief Событие создания фрагмента
@@ -39,7 +45,7 @@ class FavoritesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val recyclerViewFavor = view.findViewById<RecyclerView>(R.id.recyclerViewFavorites)
         recyclerViewFavor.apply {
-            adapter = FavoriteAdapter(LayoutInflater.from(activity), favoriteFilmList)
+            adapter = FavoriteAdapter(LayoutInflater.from(activity), viewModel.getFavoriteList())
             addItemDecoration(
                 DividerItemDecoration(
                     activity,

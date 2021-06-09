@@ -5,6 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 
 class MainFactory(private val param: Int): ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return MainViewModel(param) as T
+        return FilmsViewModel(param) as T
     }
 }

@@ -5,19 +5,14 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
-/**
- * TODO - дабавить Comment
- *  Инициализация Retrofit
- */
+import java.util.concurrent.TimeUnit
 
 object WebService {
 
-    // URL сетевого ресурса       TODO - дабавить в Preferences
+    // URL сетевого ресурса
     private const val BASE_URL = "https://my-json-server.typicode.com/ap101166/Android-base/"
 
-    // Таймаут на получение ответа в секундах   TODO - дабавить в Preferences
-    private const val callTimeOutSec = 10L
+    private const val callTimeOutSec = 30L
 
     private val httpClient: OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(
@@ -27,7 +22,8 @@ object WebService {
                         level = HttpLoggingInterceptor.Level.BASIC
                     }
                 })
-        //          .connectTimeout(callTimeOut, TimeUnit.SECONDS)    TODO
+        .connectTimeout(callTimeOutSec, TimeUnit.SECONDS)
+        .retryOnConnectionFailure(true)
         .build()
 
     private val service: WebServiceAPI = Retrofit.Builder()
