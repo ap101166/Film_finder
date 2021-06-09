@@ -14,26 +14,43 @@ object WebService {
 
     private const val callTimeOutSec = 30L
 
-    private val httpClient: OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(
-            HttpLoggingInterceptor()
-                .apply {
-                    if (BuildConfig.DEBUG) {
-                        level = HttpLoggingInterceptor.Level.BASIC
-                    }
-                })
-        .connectTimeout(callTimeOutSec, TimeUnit.SECONDS)
-        .retryOnConnectionFailure(true)
-        .build()
+    private var service: WebServiceAPI = createService()
 
-    private val service: WebServiceAPI = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .client(httpClient)
-        .build()
-        .create(WebServiceAPI::class.java)
+    /**
+     * \brief Создание сервиса
+     */
+    private fun createService(): WebServiceAPI {
 
+        val httpClient: OkHttpClient = OkHttpClient.Builder()
+            .addInterceptor(
+                HttpLoggingInterceptor()
+                    .apply {
+                        if (BuildConfig.DEBUG) {
+                            level = HttpLoggingInterceptor.Level.BASIC
+                        }
+                    })
+            .connectTimeout(callTimeOutSec, TimeUnit.SECONDS)
+            .build()
+
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(httpClient)
+            .build()
+            .create(WebServiceAPI::class.java)
+    }
+
+    /**
+     * \brief Получение сервиса
+     */
     fun getService(): WebServiceAPI {
         return service
+    }
+
+    /**
+     * \brief Перезапуск сервиса
+     */
+    fun restartService() {
+        service = createService()
     }
 }

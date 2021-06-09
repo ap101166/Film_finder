@@ -7,14 +7,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import com.otus.android_course.petrov.filmfinder.R
 import com.otus.android_course.petrov.filmfinder.repository.local_db.Film
-import com.otus.android_course.petrov.filmfinder.view_models.MainFactory
 import com.otus.android_course.petrov.filmfinder.view_models.FilmsViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), FilmListFragment.IFilmListClickListeners, ExitDialog.INoticeDialogListener {
 
     private val viewModel by lazy {
-        ViewModelProvider(this, MainFactory(23)).get(FilmsViewModel::class.java)
+        ViewModelProvider(this).get(FilmsViewModel::class.java)
     }
 
     /**

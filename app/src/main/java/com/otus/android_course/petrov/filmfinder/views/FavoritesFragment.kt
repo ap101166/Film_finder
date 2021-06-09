@@ -9,14 +9,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.otus.android_course.petrov.filmfinder.R
-import com.otus.android_course.petrov.filmfinder.view_models.MainFactory
 import com.otus.android_course.petrov.filmfinder.view_models.FilmsViewModel
 import com.otus.android_course.petrov.filmfinder.views.recycler_views.adapters.FavoriteAdapter
 
 class FavoritesFragment : Fragment() {
 
     private val viewModel by lazy {
-        ViewModelProvider(requireActivity(), MainFactory(11)).get(FilmsViewModel::class.java)
+        ViewModelProvider(requireActivity()).get(FilmsViewModel::class.java)
     }
 
     /**

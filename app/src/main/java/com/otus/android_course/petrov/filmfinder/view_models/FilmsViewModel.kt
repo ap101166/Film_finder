@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.otus.android_course.petrov.filmfinder.repository.FilmRepository
 import com.otus.android_course.petrov.filmfinder.repository.local_db.FavoriteFilm
 
-class FilmsViewModel(private val param: Int) : ViewModel() {
+class FilmsViewModel() : ViewModel() {
 
     // Признак первого запуска приложения
     private var appStart = true

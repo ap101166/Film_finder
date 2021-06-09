@@ -86,12 +86,12 @@ object FilmRepository {
                         } else {
                             // Пришел пустой ответ (список закончился) - просто обновляем filmList
                         }
-                        // Очередная страница успешно загружена, необх. обновить список фильмов
+                        // Очередная страница успешно загружена или пустой ответ, необх. обновить список фильмов
                         filmListMutLiveData.postValue(filmList)
                     } else {
                         errorMutLiveData.postValue(response.code())
                     }
-                    // Успешный ответ получен, можно отправлять следующий запрос
+                    // Ответ получен, можно отправлять следующий запрос
                     netRequestEnable = true
                 }
                 //
@@ -100,9 +100,10 @@ object FilmRepository {
                     errorMutLiveData.postValue(HARD_LOAD_ERROR)
                     // Неуспешный ответ получен, можно отправлять следующий запрос
                     netRequestEnable = true
+                    // Перезапуск сервиса при ошибке соединения
+                    WebService.restartService()
                 }
             })
-        //
         return true
     }
 
